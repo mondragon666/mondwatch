@@ -1,0 +1,3525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Mondwatch · Portfolio Dashboard</title>
+
+<!-- PWA / iOS Web App -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mondwatch">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050508">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS Splash Screens (generated inline as SVG data URIs) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23050508'/%3E%3Cpolygon points='90,25 155,55 155,125 90,155 25,125 25,55' fill='%2300e5a0' opacity='0.15' stroke='%2300e5a0' stroke-width='3'/%3E%3Cpolygon points='90,40 140,63 140,117 90,140 40,117 40,63' fill='%2300e5a0' opacity='0.08'/%3E%3Ctext x='90' y='108' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='55' fill='%2300e5a0'%3EM%3C/text%3E%3C/svg%3E">
+
+<!-- iOS Splash Screen -->
+<style id="splash-style">
+  @media screen and (display-mode: standalone) {
+    html { background: #050508; }
+  }
+</style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg:       #050508;
+  --s1:       #0a0a10;
+  --s2:       #0f0f18;
+  --border:   #1c1c2e;
+  --border2:  #252540;
+  --green:    #00e5a0;
+  --red:      #ff3c5a;
+  --blue:     #4d9fff;
+  --yellow:   #ffcc00;
+  --purple:   #a855f7;
+  --text:     #e0e0f0;
+  --muted:    #555575;
+  --w1:       #00e5a0;
+  --w2:       #4d9fff;
+  --w3:       #a855f7;
+  --w4: #ec4899; /* Rosa Vibrante (Pink) */
+  --w5: #f97316; /* Laranja Energético (Orange) */
+  --w6: #06b6d4; /* Cyan/Turquesa - Equilíbrio entre o Green e o Blue */
+  --w7: #84cc16; /* Lime/Limão - Transição vibrante entre Yellow e Green */
+  --w8: #f1f5f9; /* Off-White/Cloud - Para contraste máximo em elementos críticos */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overflow-x: hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* SCANLINE BG */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* HEADER */
+header {
+  padding: 0 32px;
+  padding-top: env(safe-area-inset-top);
+  height: calc(64px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(5,5,8,0.95);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-hex {
+  width: 32px;
+  height: 32px;
+  background: var(--green);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #000;
+  font-weight: 700;
+}
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fff;
+}
+.logo-text span { color: var(--green); }
+
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.refresh-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  padding: 7px 14px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  border-radius: 2px;
+}
+
+/* Atualização na linha ~115 */
+.refresh-btn.spinning .refresh-icon,
+.pm-card-refresh.spinning .refresh-icon {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  transform-origin: center center;
+}
+
+/* Garante que o botão em si NÃO gire — só o ícone dentro dele */
+.refresh-btn.spinning,
+.pm-card-refresh.spinning {
+  pointer-events: none;
+}
+
+/* Garanta que o keyframes esteja assim */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Ajuste específico para o botão da aba Overview (linha ~350) */
+.ov-tab-refresh {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  /* ... resto do seu código ... */
+}
+
+/* Correção para o conflito de transform no Overview — só o ícone gira */
+.ov-tab-refresh.spinning .refresh-icon {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  transform-origin: center center;
+}
+.ov-tab-refresh.spinning {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Removido: animação no próprio botão que causava deslocamento */
+
+.last-update {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* WALLET TABS */
+.wallet-tabs {
+  display: flex;
+  gap: 0;
+  padding: 20px 32px 0;
+  border-bottom: 1px solid var(--border);
+  overflow: visible;
+  margin-bottom: 28px;
+}
+.wtab {
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  white-space: nowrap;
+}
+.wtab:hover { color: var(--text); }
+.wtab.active { color: #fff; border-bottom-color: var(--wc); }
+.wtab .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--wc); }
+.wtab .wtab-pnl { font-size: 11px; opacity: 0.8; }
+.wtab.loading .dot { animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* COMBINED TAB */
+.wtab.combined { border-left: 1px solid var(--border); margin-left: auto; }
+
+/* MAIN CONTENT */
+.content {
+  padding: 28px 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+/* Full-width mode when LIVE panel is active */
+.content:has(#panel-live.active) {
+  max-width: 100%;
+  padding: 28px 24px;
+}
+
+/* WALLET PANEL */
+.wallet-panel { display: none; }
+.wallet-panel.active { display: block; }
+
+/* KPI GRID */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.kpi {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.kpi::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--kc, var(--green));
+}
+.kpi:hover { border-color: var(--border2); }
+.kpi-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.kpi-val {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--kc, #fff);
+}
+.kpi-val.neutral { color: #fff; }
+.kpi-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* SECTION TITLE */
+.sec-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* TWO-COL LAYOUT */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+/* CHART CARD */
+.chart-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px;
+}
+.chart-card canvas { width: 100% !important; }
+
+/* TABLE */
+.table-wrap {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+.table-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.table-header-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.table-count {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--border);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.t-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead { background: var(--s2); }
+th {
+  padding: 10px 14px;
+  text-align: left;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+}
+th.sortable:hover { color: var(--text); }
+th.sort-asc::after  { content: ' ▲'; color: var(--green); }
+th.sort-desc::after { content: ' ▼'; color: var(--green); }
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  vertical-align: middle;
+  font-weight: 500;
+}
+tbody tr:hover { background: rgba(255,255,255,0.02); }
+tbody tr:last-child td { border-bottom: none; }
+
+.outcome-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 1px;
+}
+.outcome-yes { background: rgba(0,229,160,0.12); color: var(--green); }
+.outcome-no  { background: rgba(255,60,90,0.12);  color: var(--red); }
+
+.pos-green { color: var(--green); font-weight: 700; }
+.pos-red   { color: var(--red);   font-weight: 700; }
+.pos-gray  { color: var(--muted); }
+
+.mini-bar {
+  width: 60px;
+  height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+}
+.mini-bar-fill { height: 100%; border-radius: 2px; }
+
+.market-name {
+  max-width: 360px;
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+  word-break: break-word;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.35;
+}
+.market-name a {
+  color: inherit;
+  text-decoration: none;
+}
+.market-name a:hover { color: var(--blue); }
+
+/* LOADING STATE */
+.loading-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+.loading-state .spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+.loading-state p {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+/* ERROR STATE */
+.error-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--red);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+/* ACTIVITY FEED */
+.activity-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 13px;
+}
+.activity-item:last-child { border-bottom: none; }
+.act-icon {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.act-buy  { background: rgba(0,229,160,0.12); color: var(--green); }
+.act-sell { background: rgba(255,60,90,0.12);  color: var(--red); }
+.act-redeem { background: rgba(77,159,255,0.12); color: var(--blue); }
+.act-time {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* PRICE BADGE */
+.price-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.05);
+}
+
+/* EMPTY STATE */
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* COMBINED view */
+.combined-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.wallet-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* PORTFOLIO SUMMARY CARD (Polymarket-style) */
+.portfolio-summary-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+@media (max-width: 700px) { .portfolio-summary-row { grid-template-columns: 1fr; } }
+
+.pm-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 22px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.pm-card-refresh {
+  position: absolute;
+  bottom: 16px;
+  right: 20px;
+  background: rgba(0,229,160,0.08);
+  border: 1px solid var(--border2);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  padding: 14px 32px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all 0.25s;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.pm-card-refresh:hover {
+  background: rgba(0,229,160,0.15);
+  border-color: var(--green);
+  box-shadow: 0 0 12px rgba(0,229,160,0.15);
+}
+.pm-card-refresh:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pm-card-refresh .refresh-icon {
+  display: inline-block;
+  transition: transform 0.3s;
+}
+.pm-card-refresh:hover .refresh-icon {
+  transform: rotate(90deg);
+}
+.pm-card-refresh.spinning .refresh-icon {
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  transform-origin: center center;
+}
+.pm-card-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pm-card-value {
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: -2px;
+}
+.pm-card-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.pm-card-sub.neg { color: var(--red); }
+.pm-card-sub.pos { color: var(--green); }
+.pm-card-sub.neutral { color: var(--muted); }
+
+.pm-card-available {
+  position: absolute;
+  top: 22px;
+  right: 24px;
+  text-align: right;
+}
+.pm-available-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.pm-available-val {
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -1px;
+}
+
+/* PnL Chart Card */
+.pnl-chart-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 22px 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.pnl-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.pnl-card-left {}
+.pnl-value-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pnl-triangle {
+  font-size: 14px;
+}
+.pnl-triangle.pos { color: var(--green); }
+.pnl-triangle.neg { color: var(--red); }
+.pnl-card-value {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.pnl-card-period {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+.pnl-period-tabs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.pnl-ptab {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  transition: all 0.15s;
+}
+.pnl-ptab:hover { color: var(--text); }
+.pnl-ptab.active {
+  background: var(--border2);
+  color: #fff;
+}
+.pnl-polymarket-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+.pnl-chart-area {
+  flex: 1;
+  min-height: 80px;
+  position: relative;
+}
+#pnlSvgChart {
+  width: 100%;
+  height: 90px;
+  display: block;
+}
+
+/* TRADE NOTIFICATION TOAST — centered overlay, aggregating */
+.trade-toast-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: none;
+  background: rgba(0,0,0,0);
+  transition: background 0.4s ease;
+}
+.trade-toast-overlay.visible {
+  background: rgba(0,0,0,0.4);
+  pointer-events: auto;
+}
+.trade-toast-overlay.exit {
+  background: rgba(0,0,0,0);
+  pointer-events: none;
+}
+.trade-toast {
+  width: min(440px, 92vw);
+  max-height: 85vh;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--s1);
+  border: 1px solid var(--border2);
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(0,229,160,0.08);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.trade-toast-overlay.visible .trade-toast {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.trade-toast-overlay.exit .trade-toast {
+  opacity: 0;
+  transform: translateY(-20px) scale(0.95);
+}
+/* Close button */
+.trade-toast-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  z-index: 20;
+  line-height: 1;
+  backdrop-filter: blur(6px);
+}
+.trade-toast-close:hover {
+  background: rgba(255,60,90,0.4);
+  border-color: var(--red);
+}
+/* Panel header (count + timer) */
+.trade-toast-panel-header {
+  padding: 10px 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--s2);
+}
+.trade-toast-panel-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--green);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.trade-toast-panel-count {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  background: var(--border2);
+  color: var(--text);
+  padding: 1px 7px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+/* Scrollable entries area */
+.trade-toast-entries {
+  overflow-y: auto;
+  max-height: calc(85vh - 40px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+/* Blur toggle button */
+.trade-toast-blur-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.trade-toast-blur-btn:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.trade-toast-blur-btn.active {
+  background: rgba(255,204,0,0.1);
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+/* Blurred wallet info in toast */
+.toast-wallet-blurred .trade-toast-wallet-addr,
+.toast-wallet-blurred .trade-toast-wallet-label {
+  filter: blur(5px);
+  user-select: none;
+  transition: filter 0.2s;
+}
+.toast-wallet-blurred .trade-toast-wallet-dot {
+  filter: blur(3px);
+  transition: filter 0.2s;
+}
+/* Individual toast entry with city image */
+.trade-toast-entry {
+  border-bottom: 1px solid var(--border);
+  animation: toastEntryIn 0.4s ease;
+}
+.trade-toast-entry:last-child { border-bottom: none; }
+@keyframes toastEntryIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.trade-toast-img {
+  position: relative;
+  height: 120px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+.trade-toast-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.65);
+}
+.trade-toast-img-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(5,5,8,0.9));
+  padding: 28px 20px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.trade-toast-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 50px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.trade-toast-badge.buy {
+  background: var(--green);
+  color: #000;
+}
+.trade-toast-badge.sell {
+  background: var(--red);
+  color: #fff;
+}
+.trade-toast-badge.redeem {
+  background: var(--blue);
+  color: #fff;
+}
+.trade-toast-time {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+}
+.trade-toast-body {
+  padding: 14px 20px 16px;
+}
+.trade-toast-market {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.35;
+  margin-bottom: 12px;
+}
+.trade-toast-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.trade-toast-stat {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+.trade-toast-stat-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.trade-toast-stat-val {
+  font-size: 20px;
+  font-weight: 700;
+}
+.trade-toast-wallet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+.trade-toast-wallet-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.trade-toast-wallet-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+.trade-toast-wallet-addr {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  margin-left: auto;
+}
+.trade-toast-amount {
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ANIMATIONS */
+.fade-in { animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.glow {
+  text-shadow: 0 0 20px currentColor;
+}
+
+/* TRADER STATS BANNER */
+.trader-stats-banner {
+  display: flex;
+  align-items: center;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  gap: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+.ts-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+.ts-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.ts-val {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+.ts-sep {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+  margin: 0 16px;
+  flex-shrink: 0;
+}
+@media (max-width: 700px) { .ts-sep { display: none; } }
+
+/* OVERVIEW LAYOUT */
+.overview-wallet-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 4px;
+}
+@media (max-width: 1200px) { .overview-wallet-row { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px) { .overview-wallet-row { grid-template-columns: 1fr; } }
+.ov-wallet-card {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--wc, var(--green));
+  border-radius: 4px;
+  padding: 18px 20px;
+  transition: border-color 0.2s;
+}
+.ov-wallet-card:hover { border-color: var(--wc, var(--green)); }
+.ov-w-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+.ov-w-label { font-size:14px; font-weight:700; letter-spacing:2px; font-family:'Share Tech Mono',monospace; }
+.ov-total { font-size:32px; font-weight:700; color:#fff; letter-spacing:-1px; margin-bottom:12px; }
+.ov-breakdown { display:flex; gap:0; margin-bottom:8px; }
+.ov-bitem { flex:1; }
+.ov-blabel { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; margin-bottom:2px; }
+.ov-bval { font-size:16px; font-weight:700; color:#fff; }
+.ov-divider { height:1px; background:var(--border); margin:10px 0; }
+
+/* EDIT LABEL ICON */
+.edit-label {
+  opacity: 0;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: opacity 0.15s, color 0.15s;
+  padding: 0 2px;
+}
+.wtab:hover .edit-label { opacity: 1; }
+.edit-label:hover { color: var(--green); }
+
+/* OVERVIEW HIDE TOGGLE */
+.ov-hide-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 2px;
+  letter-spacing: 1px;
+  transition: all 0.15s;
+  margin-bottom: 16px;
+}
+.ov-hide-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* OVERVIEW TAB REFRESH BUTTON */
+.ov-tab-refresh {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  padding: 3px 10px;
+  letter-spacing: 1px;
+  background: rgba(255,204,0,0.08);
+  border: 1px solid var(--border2);
+  color: var(--yellow);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  z-index: 10;
+}
+.ov-tab-refresh:hover {
+  background: rgba(255,204,0,0.15);
+  border-color: var(--yellow);
+  box-shadow: 0 0 8px rgba(255,204,0,0.15);
+}
+.ov-tab-refresh.spinning {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.wtab.active .ov-tab-refresh { display: block; }
+
+/* OVERVIEW TRADER BANNERS */
+.ov-trader-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+.ov-trader-banner {
+  display: flex;
+  align-items: center;
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 24px;
+  gap: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+.ov-ts-item { display:flex; flex-direction:column; gap:4px; flex:1; min-width:120px; }
+.ov-ts-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; white-space:nowrap; }
+.ov-ts-val { font-size:22px; font-weight:700; color:#fff; white-space:nowrap; }
+.ov-ts-sep { width:1px; height:40px; background:var(--border); margin:0 20px; flex-shrink:0; }
+
+/* OVERVIEW PNL CHARTS ROW */
+.ov-pnl-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+@media (max-width: 1200px) { .ov-pnl-row { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px) { .ov-pnl-row { grid-template-columns: 1fr; } }
+
+/* ON-CHAIN LIVE PANEL */
+.onchain-panel {
+  background: var(--s1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.onchain-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--green), var(--blue), var(--purple));
+}
+
+/* Live panel full-width override */
+.wallet-panel[id="panel-live"].active {
+  max-width: 100%;
+}
+.wallet-panel[id="panel-live"] .onchain-panel {
+  border-radius: 6px;
+}
+.wallet-panel[id="panel-live"] .live-summary-val {
+  font-size: 28px;
+}
+.wallet-panel[id="panel-live"] .live-table td {
+  font-size: 16px;
+  padding: 18px 20px;
+}
+.wallet-panel[id="panel-live"] .live-table th {
+  font-size: 11px;
+  padding: 14px 20px;
+  letter-spacing: 2.5px;
+}
+.wallet-panel[id="panel-live"] .live-wallet-name {
+  font-size: 15px;
+}
+.wallet-panel[id="panel-live"] .onchain-act-market {
+  font-size: 15px;
+}
+.wallet-panel[id="panel-live"] .onchain-act-val {
+  font-size: 14px;
+}
+.wallet-panel[id="panel-live"] .onchain-act-time {
+  font-size: 13px;
+}
+.onchain-header {
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.onchain-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.onchain-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green), 0 0 16px rgba(0,229,160,0.3);
+  animation: pulse-live 2s infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-live {
+  0%,100% { opacity: 1; box-shadow: 0 0 8px var(--green), 0 0 16px rgba(0,229,160,0.3); }
+  50% { opacity: 0.5; box-shadow: 0 0 4px var(--green), 0 0 8px rgba(0,229,160,0.15); }
+}
+.onchain-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--green);
+  font-weight: 700;
+}
+.onchain-network {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--purple);
+  background: rgba(168,85,247,0.1);
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 1px solid rgba(168,85,247,0.2);
+}
+.onchain-addr {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+.onchain-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.onchain-cell {
+  padding: 18px 22px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.onchain-cell:hover { background: rgba(255,255,255,0.015); }
+.onchain-cell:nth-child(4n) { border-right: none; }
+.onchain-cell:nth-last-child(-n+4) { border-bottom: none; }
+.onchain-cell-primary {
+  grid-column: span 2;
+}
+.onchain-cell-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.onchain-cell-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.onchain-cell-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+.onchain-exposure-bar {
+  width: 60px;
+  height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+  display: inline-block;
+}
+.onchain-exposure-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+@media (max-width: 900px) {
+  .onchain-grid { grid-template-columns: repeat(2, 1fr); }
+  .onchain-cell-primary { grid-column: span 1; }
+  .onchain-cell:nth-child(4n) { border-right: 1px solid var(--border); }
+  .onchain-cell:nth-child(2n) { border-right: none; }
+}
+
+/* ON-CHAIN ACTIVITY FEED */
+.onchain-activity {
+  border-top: 1px solid var(--border);
+}
+.onchain-activity-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--green);
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,229,160,0.02);
+}
+.onchain-activity-list {
+  max-height: 460px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+}
+.onchain-act-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 14px;
+  transition: background 0.1s;
+}
+.onchain-act-row:hover { background: rgba(255,255,255,0.02); }
+.onchain-act-row:last-child { border-bottom: none; }
+.onchain-act-latest {
+  background: rgba(0,229,160,0.03);
+  border-left: 2px solid var(--green);
+}
+.onchain-act-icon {
+  font-size: 12px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.onchain-act-type {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  min-width: 50px;
+  flex-shrink: 0;
+}
+.onchain-act-market {
+  flex: 1;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 14px;
+  min-width: 0;
+  line-height: 1.3;
+}
+.onchain-act-val {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: var(--blue);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.onchain-act-time {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 55px;
+  text-align: right;
+}
+
+/* LIVE WALLET ROWS — table layout for perfect alignment */
+.live-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+.live-table thead {
+  background: var(--s2);
+}
+.live-table th {
+  padding: 12px 18px;
+  text-align: left;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+.live-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  vertical-align: middle;
+  font-weight: 500;
+  font-size: 15px;
+}
+.live-table tbody tr {
+  transition: background 0.15s;
+}
+.live-table tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+.live-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.live-wallet-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.live-wallet-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.live-wallet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.live-wallet-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.live-wallet-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.live-rank-badge {
+  color: var(--yellow);
+}
+.live-cash-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-top: 2px;
+}
+.live-pos-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Live summary cards */
+.live-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.live-summary-cell {
+  padding: 20px 24px;
+  border-right: 1px solid var(--border);
+}
+.live-summary-cell:last-child { border-right: none; }
+.live-summary-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.live-summary-val {
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.live-summary-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+@media (max-width: 1100px) {
+  .live-summary-grid { grid-template-columns: repeat(3, 1fr); }
+  .live-table { font-size: 12px; }
+  .live-table th, .live-table td { padding: 10px 10px; }
+}
+@media (max-width: 700px) {
+  .live-summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ═══ PWA / iPhone Mobile Optimizations ═══ */
+@media (max-width: 480px) {
+  header {
+    padding: 0 12px;
+    padding-top: env(safe-area-inset-top);
+    gap: 8px;
+  }
+  .logo-text { font-size: 16px; letter-spacing: 1px; }
+  .logo-hex { width: 26px; height: 26px; font-size: 12px; }
+  header > div:nth-child(2) { display: none; } /* hide subtitle on mobile */
+
+  .wallet-tabs {
+    padding: 8px 8px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  .wallet-tabs::-webkit-scrollbar { display: none; }
+  .wtab {
+    padding: 10px 12px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    min-width: max-content;
+  }
+  .wtab .edit-label { display: none; }
+
+  .content { padding: 14px 10px; }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .kpi { padding: 12px 14px; }
+  .kpi-val { font-size: 20px; }
+
+  .two-col { grid-template-columns: 1fr; gap: 12px; }
+
+  .portfolio-summary-row { grid-template-columns: 1fr; gap: 10px; }
+  .pm-card { padding: 16px; }
+  .pm-card-value { font-size: 38px; }
+  .pm-available-val { font-size: 24px; }
+  .pm-card-refresh {
+    position: relative;
+    bottom: auto; right: auto;
+    width: 100%;
+    justify-content: center;
+    margin-top: 14px;
+    padding: 12px 20px;
+  }
+
+  .overview-wallet-row { grid-template-columns: 1fr; }
+  .ov-pnl-row { grid-template-columns: 1fr; }
+  .ov-total { font-size: 24px; }
+
+  .trader-stats-banner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .ts-sep { display: none; }
+  .ts-item { flex: 0 0 calc(50% - 4px); min-width: 0; }
+  .ts-val { font-size: 14px; }
+
+  table { font-size: 12px; }
+  th, td { padding: 8px 10px; }
+  .market-name { max-width: 200px; font-size: 12px; }
+
+  .onchain-grid { grid-template-columns: 1fr 1fr; }
+  .onchain-cell-primary { grid-column: span 2; }
+  .onchain-cell { padding: 12px 14px; }
+  .onchain-cell-value { font-size: 18px; }
+
+  .live-summary-grid { grid-template-columns: 1fr 1fr; }
+  .live-summary-cell { padding: 14px 12px; }
+  .live-summary-val { font-size: 18px; }
+
+  .trade-toast { width: min(380px, 95vw); }
+  .trade-toast-img { height: 90px; }
+  .trade-toast-market { font-size: 14px; }
+  .trade-toast-stat-val { font-size: 16px; }
+}
+
+/* Standalone mode (added to home screen) */
+@media (display-mode: standalone) {
+  body { padding-top: env(safe-area-inset-top); }
+  header {
+    padding-top: calc(env(safe-area-inset-top) + 4px);
+    height: calc(64px + env(safe-area-inset-top) + 4px);
+  }
+}
+
+/* Pull-to-refresh prevention in standalone */
+@supports (-webkit-touch-callout: none) {
+  body { overscroll-behavior-y: contain; }
+}
+</style>
+</head>
+<body>
+
+<!-- Trade notification toast overlay (centered, with photos, aggregating) -->
+<div class="trade-toast-overlay" id="tradeToastOverlay" style="display:none;">
+  <div class="trade-toast" id="tradeToast">
+    <button class="trade-toast-close" id="toastCloseBtn" onclick="closeTradePanel()" title="Fechar">✕</button>
+    <div class="trade-toast-panel-header">
+      <span class="onchain-live-dot" style="width:5px;height:5px"></span>
+      <span class="trade-toast-panel-title">TRADES DETECTADOS</span>
+      <span class="trade-toast-panel-count" id="toastCount">0</span>
+      <button class="trade-toast-blur-btn" id="toastBlurBtn" onclick="toggleToastBlur()" title="Ocultar/Mostrar endereços">◉ HIDE</button>
+    </div>
+    <div class="trade-toast-entries" id="toastEntries"></div>
+  </div>
+</div>
+
+<header>
+  <div class="logo-mark">
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="18,1 35,9.5 35,26.5 18,35 1,26.5 1,9.5" fill="#00e5a0" opacity="0.15" stroke="#00e5a0" stroke-width="1.2"/>
+      <polygon points="18,6 30,12.5 30,23.5 18,30 6,23.5 6,12.5" fill="#00e5a0" opacity="0.08"/>
+      <text x="18" y="23" text-anchor="middle" font-family="Rajdhani,sans-serif" font-weight="700" font-size="17" fill="#00e5a0" letter-spacing="0">M</text>
+    </svg>
+    <div class="logo-text">MOND<span>WATCH</span></div>
+  </div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px">
+    MULTI-WALLET MONITOR · POLYMARKET
+  </div>
+  <div class="header-right">
+    <span class="last-update" id="lastUpdate">—</span>
+  </div>
+</header>
+
+<div class="wallet-tabs" id="walletTabs">
+  <div class="wtab active" style="--wc:var(--green)" data-wallet="live" onclick="showWallet('live')">
+    <span class="dot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>
+    <span>LIVE</span>
+  </div>
+  <div class="wtab loading" style="--wc:var(--w1)" data-wallet="0" onclick="showWallet(0)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-0">W1</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(0)" title="Renomear">✎</span>
+  </div>
+  <div class="wtab loading" style="--wc:var(--w2)" data-wallet="1" onclick="showWallet(1)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-1">W2</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(1)" title="Renomear">✎</span>
+  </div>
+  <div class="wtab loading" style="--wc:var(--w3)" data-wallet="2" onclick="showWallet(2)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-2">W3</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(2)" title="Renomear">✎</span>
+  </div>
+   <div class="wtab loading" style="--wc:var(--w4)" data-wallet="3" onclick="showWallet(3)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-3">W4</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(3)" title="Renomear">✎</span>
+  </div>
+   <div class="wtab loading" style="--wc:var(--w5)" data-wallet="4" onclick="showWallet(4)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-4">W5</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(4)" title="Renomear">✎</span>
+  </div>
+  <div class="wtab loading" style="--wc:var(--w6)" data-wallet="5" onclick="showWallet(5)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-5">W6</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(5)" title="Renomear">✎</span>
+  </div>
+  <div class="wtab loading" style="--wc:var(--w7)" data-wallet="6" onclick="showWallet(6)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-6">W7</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(6)" title="Renomear">✎</span>
+  </div>
+  <div class="wtab loading" style="--wc:var(--w8)" data-wallet="7" onclick="showWallet(7)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-7">W8</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(7)" title="Renomear">✎</span>
+  </div>
+  <div class="wtab" style="--wc:#ffcc00; position:relative;" data-wallet="overview" onclick="showWallet('overview')">
+    <span class="dot" style="background:var(--yellow)"></span>
+    <span>OVERVIEW</span>
+
+  </div>
+  <div class="wtab combined" style="--wc:#fff" data-wallet="combined" onclick="showWallet('combined')">
+    <span class="dot" style="background:#fff"></span>
+    <span>COMBINED</span>
+  </div>
+</div>
+
+<div class="content" id="mainContent">
+  <!-- Wallet panels rendered by JS -->
+</div>
+
+<script>
+const WALLETS = [
+  { addr: '0x9E83302071A0c2d2E243129a3000B72Ae315593D', color: 'var(--w1)', label: 'W1', short: '0x9E83...593D' },
+  { addr: '0x138b5b2efdc9AdB35d35B70ffD27F2469131b6D5', color: 'var(--w2)', label: 'W2', short: '0x138b...b6D5' },
+  { addr: '0x177296C6B1050dF6d31daE7FA3408eEA22F279DD', color: 'var(--w3)', label: 'W3', short: '0x1772...79DD' },
+  { addr: '0x9006cd1fd6BdDD7c215462b31048189309dE8647', color: 'var(--w4)', label: 'W4', short: '0x9006...8647' },
+  { addr: '0x5198EFc7B7ad63e812600Cd69c44f57dD1df3D9A', color: 'var(--w5)', label: 'W5', short: '0x5198...3D9A' },
+  { addr: '0x8E2Ccc6ddA58375a8633556163cE732aE8C5018b', color: 'var(--w6)', label: 'W6', short: '0x8E2C...018b' },
+  { addr: '0x960e5B2c2B8B0D5c7354318F25A04fE02513B0B7', color: 'var(--w7)', label: 'W7', short: '0x960e...B0B7' },
+  { addr: '0x122DCFe61283AcD148714bBC3f5eF64af4A2C5c7', color: 'var(--w8)', label: 'W8', short: '0x122D...C5c7' },
+];
+
+// Load saved custom labels from localStorage
+try {
+  const saved = JSON.parse(localStorage.getItem('polywatch_labels') || '{}');
+  WALLETS.forEach((w, i) => { if (saved[i]) w.label = saved[i]; });
+} catch(e) {}
+
+function renameWallet(idx) {
+  const current = WALLETS[idx].label;
+  const novo = prompt(`Novo nome para ${current}:`, current);
+  if (!novo || novo.trim() === '') return;
+  WALLETS[idx].label = novo.trim();
+  // Persist
+  try {
+    const saved = JSON.parse(localStorage.getItem('polywatch_labels') || '{}');
+    saved[idx] = novo.trim();
+    localStorage.setItem('polywatch_labels', JSON.stringify(saved));
+  } catch(e) {}
+  // Re-render tab label and panel
+  document.querySelector(`.wtab[data-wallet="${idx}"] .wlabel`).textContent = novo.trim();
+  renderWallet(idx);
+}
+
+const DATA_API = 'https://data-api.polymarket.com';
+const GAMMA_API = 'https://gamma-api.polymarket.com';
+
+// USDC contract on Polygon (6 decimals)
+const USDC_CONTRACT_POLYGON = '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174';
+const ETHERSCAN_V2_API = 'https://api.etherscan.io/v2/api';
+const ETHERSCAN_KEY    = 'DX88BA4M5RVVWEF55VXQMF96GMCWFXKDEW';
+
+let walletData = [null, null, null, null, null];
+let currentTab = 'live';
+
+// ─── Fetch helpers ────────────────────────────────────────────────
+async function apiFetch(url) {
+  try {
+    const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch(e) {
+    console.warn('Fetch error:', url, e.message);
+    return null;
+  }
+}
+
+// Fetch USDC balance on Polygon via Etherscan v2 API (chainid=137)
+// With retry logic and staggered delays to avoid rate limits
+async function fetchUsdcBalance(addr, retries = 3, delayMs = 0) {
+  if (delayMs > 0) await new Promise(r => setTimeout(r, delayMs));
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const url = `${ETHERSCAN_V2_API}?chainid=137&module=account&action=tokenbalance` +
+                  `&contractaddress=${USDC_CONTRACT_POLYGON}&address=${addr}&tag=latest&apikey=${ETHERSCAN_KEY}`;
+      const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json();
+      console.log(`Etherscan USDC [attempt ${attempt}] for ${addr.slice(0,8)}:`, JSON.stringify(data));
+
+      if (data.status === '0' && data.result && data.result.toLowerCase().includes('rate limit')) {
+        console.warn(`Etherscan rate limited [attempt ${attempt}], retrying in ${attempt * 1500}ms...`);
+        await new Promise(r => setTimeout(r, attempt * 1500));
+        continue;
+      }
+
+      if (data.status === '1' && data.result) {
+        return parseFloat(data.result) / 1e6;
+      }
+
+      if (attempt < retries) {
+        console.warn(`Etherscan status!=1 [attempt ${attempt}]:`, data.message, '— retrying in', attempt * 1000, 'ms');
+        await new Promise(r => setTimeout(r, attempt * 1000));
+        continue;
+      }
+
+      console.warn('Etherscan returned status!=1 after all retries:', data.message, data.result);
+      return 0;
+    } catch(e) {
+      console.warn(`Etherscan fetch error [attempt ${attempt}]:`, addr.slice(0,8), e.message);
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, attempt * 1000));
+        continue;
+      }
+      return 0;
+    }
+  }
+  return 0;
+}
+
+async function loadWallet(idx) {
+  const addr = WALLETS[idx].addr;
+  const [positions, closed, activity, value] = await Promise.all([
+    apiFetch(`${DATA_API}/positions?user=${addr}&sizeThreshold=.01&limit=100`),
+    apiFetch(`${DATA_API}/closed-positions?user=${addr}&limit=500`),
+    apiFetch(`${DATA_API}/activity?user=${addr}&limit=100`),
+    apiFetch(`${DATA_API}/value?user=${addr}`)
+  ]);
+
+  // Fetch trades and leaderboard in parallel
+  // USDC balance is fetched with staggered delay (idx * 400ms) to avoid Etherscan rate limit
+  const [trades, leaderboard, usdcBalance] = await Promise.all([
+    apiFetch(`${DATA_API}/trades?user=${addr}&limit=500`),
+    apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=PNL&limit=1&offset=0&category=overall&user=${addr}`),
+    fetchUsdcBalance(addr, 3, idx * 400)
+  ]);
+
+  // Fetch PnL time-series for all 4 periods in parallel
+  const PNL_API = 'https://user-pnl-api.polymarket.com/user-pnl';
+  const [pnl1d, pnl1w, pnl1m, pnlAll] = await Promise.all([
+    apiFetch(`${PNL_API}?user_address=${addr}&interval=1d&fidelity=1h`),
+    apiFetch(`${PNL_API}?user_address=${addr}&interval=1w&fidelity=3h`),
+    apiFetch(`${PNL_API}?user_address=${addr}&interval=1m&fidelity=1d`),
+    apiFetch(`${PNL_API}?user_address=${addr}&interval=all&fidelity=12h`),
+  ]);
+  const pnlSeries = { '1D': pnl1d, '1W': pnl1w, '1M': pnl1m, 'ALL': pnlAll };
+  console.log(`W${idx+1} pnlSeries ALL sample:`, JSON.stringify(pnlAll?.slice(0,2)));
+
+  walletData[idx] = { positions, closed, activity, value, trades, usdcBalance, leaderboard, pnlSeries };
+  return walletData[idx];
+}
+
+// ─── PnL / Math helpers ───────────────────────────────────────────
+function fmt$(n, decimals=2) {
+  if (n == null || isNaN(n)) return '—';
+  const abs = Math.abs(n);
+  const s = abs.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  return (n < 0 ? '-$' : '$') + s;
+}
+function fmtPct(n) {
+  if (n == null || isNaN(n)) return '—';
+  return (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
+}
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const d = new Date(typeof ts === 'number' ? ts * 1000 : ts);
+  const now = Date.now();
+  const diff = (now - d.getTime()) / 1000;
+  if (diff < 60)   return Math.floor(diff) + 's ago';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400)return Math.floor(diff/3600) + 'h ago';
+  return d.toLocaleDateString('pt-BR');
+}
+function pnlClass(n) { return n > 0 ? 'pos-green' : n < 0 ? 'pos-red' : 'pos-gray'; }
+function pnlSign(n) { return n > 0 ? '+' : ''; }
+
+// ─── Render ───────────────────────────────────────────────────────
+function renderWallet(idx) {
+  const d = walletData[idx];
+  const w = WALLETS[idx];
+  const el = document.getElementById(`panel-${idx}`);
+  if (!el) return;
+
+  if (!d) {
+    el.innerHTML = `<div class="error-state">⚠ FALHA AO CARREGAR DADOS — API PODE ESTAR INACESSÍVEL</div>`;
+    return;
+  }
+
+  // Compute KPIs
+  const rawPositions = Array.isArray(d.positions) ? d.positions : [];
+  const closed    = Array.isArray(d.closed) ? d.closed : [];
+  const activity  = Array.isArray(d.activity) ? d.activity : [];
+  const trades    = Array.isArray(d.trades) ? d.trades : [];
+
+  // ─ Filter out resolved/closed positions that the API still returns as "open" ─
+  const closedCondIds = new Set(closed.map(p => p.conditionId).filter(Boolean));
+  const positions = rawPositions.filter(p => {
+    // Exclude if this conditionId already appears in closed positions
+    if (p.conditionId && closedCondIds.has(p.conditionId)) return false;
+    // Exclude if current price is exactly 0 or 1 (market fully resolved) — only if field exists
+    const cpRaw = p.currPrice ?? p.currentPrice ?? null;
+    if (cpRaw !== null) {
+      const cp = parseFloat(cpRaw) || 0;
+      if (cp >= 0.999) return false;
+    }
+    return true;
+  });
+
+  // Leaderboard data — fields: vol, pnl, rank, userName
+  // { rank, proxyWallet, userName, vol, pnl, profileImage, ... }
+  const lbData      = Array.isArray(d.leaderboard) ? d.leaderboard[0] : null;
+  const lbVolume    = parseFloat(lbData?.vol  || 0);
+  const lbPnl       = parseFloat(lbData?.pnl  || 0);
+  const lbRank      = lbData?.rank ? parseInt(lbData.rank) : null;
+  const lbUserName  = lbData?.userName || null;
+
+  const closedRealizedPnl= closed.reduce((s,p) => s + (parseFloat(p.realizedPnl)||0), 0);
+
+  // Use leaderboard PnL if available (all-time realized), otherwise fallback to closed sum
+  const realizedPnl = lbPnl || closedRealizedPnl;
+  const volumeTotal = lbVolume || trades.reduce((s,t)=>s+(parseFloat(t.usdcSize||t.size)||0),0);
+  const biggestWin  = closed.length > 0
+    ? Math.max(...closed.map(p => parseFloat(p.realizedPnl)||0))
+    : 0;
+
+  // Value: positions + USDC cash = total wallet
+  const positionsValue = positions.reduce((s, p) => s + (parseFloat(p.currentValue)||0), 0);
+
+  // Priority: 1) on-chain USDC from Polygon, 2) API cash fields, 3) fallback to /value aggregate
+  const onChainUsdc = typeof d.usdcBalance === 'number' ? d.usdcBalance : 0;
+  const apiCashBalance = d.value
+    ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance)
+       || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0)
+    : 0;
+  // Use on-chain USDC if available (>= 0.01), otherwise fall back to API
+  const cashBalance = onChainUsdc >= 0.01 ? onChainUsdc : apiCashBalance;
+  let totalValue = positionsValue + cashBalance;
+  // Fallback: if no cash found at all and /value API returned a bigger aggregate figure, prefer it
+  if (cashBalance < 0.01 && d.value && d.value.value) {
+    const apiVal = parseFloat(d.value.value) || 0;
+    if (apiVal > positionsValue) totalValue = apiVal;
+  }
+  const cashSource = onChainUsdc >= 0.01 ? 'on-chain' : (apiCashBalance > 0 ? 'api' : 'none');
+
+  const totalCashPnl     = positions.reduce((s,p) => s + (parseFloat(p.cashPnl)||0), 0);
+  // Profit/Loss: prefer leaderboard all-time PnL (set after lbData parsed below)
+  const totalPnl         = closedRealizedPnl; // will be overridden by realizedPnl after lbData
+
+  // Tab update
+  // tab PnL removed
+  document.querySelector(`.wtab[data-wallet="${idx}"]`).classList.remove('loading');
+
+  // PnL % estimate
+  const invested = positions.reduce((s,p) => s + (parseFloat(p.totalBought)||0), 0);
+  const pnlPct = invested > 0 ? (totalPnl / invested * 100) : 0;
+
+  // Build HTML
+  let html = `<div class="fade-in">`;
+
+  // ─ Address bar ─
+  html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <div style="width:8px;height:8px;border-radius:50%;background:${w.color}"></div>
+    <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:${w.color}">${w.addr}</span>
+    <a href="https://polymarket.com/profile/${w.addr}" target="_blank"
+       style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:3px 8px;border-radius:2px;letter-spacing:1px"
+       onmouseover="this.style.borderColor='${w.color}'" onmouseout="this.style.borderColor='var(--border)'">
+      ↗ POLYMARKET
+    </a>
+  </div>`;
+
+  // ─ Portfolio Summary Card (Polymarket-style) ─
+  const availableToTrade = cashBalance;
+  const pnlPctDisplay = null; // removed
+  const pnlIsPos = closedRealizedPnl >= 0;
+
+  html += `<div class="portfolio-summary-row">
+    <div class="pm-card">
+      <div class="pm-card-label"><span style="width:7px;height:7px;border-radius:50%;background:${w.color};display:inline-block"></span> Portfolio ${w.label}</div>
+      <div class="pm-card-value">${fmt$(totalValue)}</div>
+      <div class="pm-card-sub ${realizedPnl >= 0 ? 'pos' : 'neg'}">
+        ${pnlSign(realizedPnl)}${fmt$(realizedPnl)} PnL realizado${lbData ? ' · <span style="color:var(--green);font-size:9px">⬡ leaderboard</span>' : ''}
+      </div>
+      <!-- Breakdown: positions + cash = total -->
+      <div style="margin-top:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:13px">
+        <span style="color:var(--muted)">Posições</span>
+        <span style="color:#fff;font-weight:700">${fmt$(positionsValue)}</span>
+        <span style="color:var(--muted)">+</span>
+        <span style="color:var(--muted)">Cash</span>
+        <span style="color:var(--blue);font-weight:700">${fmt$(cashBalance)}</span>
+        ${cashBalance > 0 ? `<span style="color:${cashSource==='on-chain'?'var(--green)':'var(--yellow)'};font-size:9px;letter-spacing:1px">${cashSource==='on-chain'?'⬡ on-chain':'~ api'}</span>` : ''}
+        <span style="color:var(--muted)">=</span>
+        <span style="color:#fff;font-weight:700">${fmt$(totalValue)}</span>
+      </div>
+      ${availableToTrade > 0 ? `
+      <div class="pm-card-available">
+        <div class="pm-available-label">Available to trade <span style="color:${cashSource==='on-chain'?'var(--green)':'var(--yellow)'};font-size:8px">${cashSource==='on-chain'?'⬡ polygon':'~ est'}</span></div>
+        <div class="pm-available-val">${fmt$(availableToTrade)}</div>
+      </div>` : ''}
+    </div>
+    <div class="pnl-chart-card">
+      <div class="pnl-card-top">
+        <div class="pnl-card-left">
+          <div class="pnl-value-row">
+            <span class="pnl-triangle ${realizedPnl >= 0 ? 'pos' : 'neg'}" id="pnl-card-tri-${idx}">${realizedPnl >= 0 ? '▲' : '▼'}</span>
+            <div class="pnl-card-value ${pnlClass(realizedPnl)}" id="pnl-card-val-${idx}">${pnlSign(realizedPnl)}${fmt$(realizedPnl)}</div>
+          </div>
+          <div class="pnl-card-period" id="pnl-card-lbl-${idx}">Profit / Loss · All-Time</div>
+          <div class="pnl-polymarket-badge">⬡ Polymarket</div>
+        </div>
+        <div>
+          <div class="pnl-period-tabs">
+            <button class="pnl-ptab" onclick="setPnlPeriod(this,'1D',${idx})">1D</button>
+            <button class="pnl-ptab" onclick="setPnlPeriod(this,'1W',${idx})">1W</button>
+            <button class="pnl-ptab" onclick="setPnlPeriod(this,'1M',${idx})">1M</button>
+            <button class="pnl-ptab active" onclick="setPnlPeriod(this,'ALL',${idx})">ALL</button>
+          </div>
+        </div>
+      </div>
+      <div class="pnl-chart-area">
+        <svg id="pnl-svg-${idx}" viewBox="0 0 400 80" preserveAspectRatio="none" style="width:100%;height:90px;display:block;overflow:visible"></svg>
+      </div>
+    </div>
+  </div>`;
+
+  // ─ KPIs ─
+  html += `<div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi" style="--kc:${w.color}">
+      <div class="kpi-label">Posições</div>
+      <div class="kpi-val neutral">${fmt$(positionsValue)}</div>
+      <div class="kpi-sub">${positions.filter(p=>(parseFloat(p.currentValue)||0)>0.01).length} abertas</div>
+    </div>
+    <div class="kpi" style="--kc:var(--blue)">
+      <div class="kpi-label">Cash</div>
+      <div class="kpi-val neutral">${fmt$(cashBalance)}</div>
+      <div class="kpi-sub">${cashSource === 'on-chain' ? '⬡ on-chain · polygon' : '~ estimado'}</div>
+    </div>
+    <div class="kpi" style="--kc:${realizedPnl >= 0 ? 'var(--green)' : 'var(--red)'}">
+      <div class="kpi-label">PnL</div>
+      <div class="kpi-val ${pnlClass(realizedPnl)}">${pnlSign(realizedPnl)}${fmt$(realizedPnl)}</div>
+      <div class="kpi-sub">${lbData ? '⬡ leaderboard all-time' : closed.length + ' fechadas'}</div>
+    </div>
+    <div class="kpi" style="--kc:var(--purple)">
+      <div class="kpi-label">Volume Tradado</div>
+      <div class="kpi-val neutral">${volumeTotal > 0 ? fmt$(volumeTotal) : '—'}</div>
+      <div class="kpi-sub">${lbData ? '⬡ leaderboard all-time' : trades.length + ' trades'}</div>
+    </div>
+  </div>`;
+
+  // ─ Charts row removed ─
+
+  // ─ Trader Stats banner ─
+  html += `<div class="trader-stats-banner">
+    ${lbUserName ? `<div class="ts-item"><div class="ts-label">◈ Trader</div><div class="ts-val" style="font-size:18px;color:var(--blue)">${lbUserName}</div></div><div class="ts-sep"></div>` : ''}
+    <div class="ts-item">
+      <div class="ts-label">⬡ Volume Tradado</div>
+      <div class="ts-val">${volumeTotal > 0 ? fmt$(volumeTotal) : '—'}</div>
+    </div>
+    <div class="ts-sep"></div>
+    <div class="ts-item">
+      <div class="ts-label">▲ PnL All-Time</div>
+      <div class="ts-val ${pnlClass(realizedPnl)}">${pnlSign(realizedPnl)}${fmt$(realizedPnl)}</div>
+    </div>
+    <div class="ts-sep"></div>
+    <div class="ts-item">
+      <div class="ts-label">✦ Maior Ganho</div>
+      <div class="ts-val ${biggestWin > 0 ? 'pos-green' : ''}">${biggestWin > 0 ? '+' + fmt$(biggestWin) : '—'}</div>
+    </div>
+    <div class="ts-sep"></div>
+    <div class="ts-item">
+      <div class="ts-label">⚑ Rank Global</div>
+      <div class="ts-val" style="color:var(--yellow)">${lbRank ? '#' + lbRank.toLocaleString() : '—'}</div>
+    </div>
+  </div>`;
+
+  // ─ Open positions ─
+  html += `<div class="table-wrap" style="margin-bottom:28px">
+    <div class="table-header">
+      <span class="table-header-title">Posições Abertas</span>
+      <span class="table-count" id="open-count-${idx}">${positions.filter(p=>(parseFloat(p.currentValue)||0)>0.01).length}</span>
+    </div>`;
+
+  if (positions.length === 0) {
+    html += `<div class="empty-state">Nenhuma posição aberta</div>`;
+  } else {
+    const tableId = `open-pos-table-${idx}`;
+    html += `<div class="t-scroll"><table id="${tableId}">
+      <thead><tr>
+        <th class="sortable" onclick="sortTable('${tableId}',0,'str',this)">Mercado</th>
+        <th class="sortable" onclick="sortTable('${tableId}',1,'str',this)">Outcome</th>
+        <th class="sortable" onclick="sortTable('${tableId}',2,'num',this)">Preço Médio</th>
+        <th class="sortable" onclick="sortTable('${tableId}',3,'num',this)">Valor Pago</th>
+        <th class="sortable" onclick="sortTable('${tableId}',4,'num',this)">Size</th>
+        <th class="sortable" onclick="sortTable('${tableId}',5,'num',this)">Valor Atual</th>
+        <th class="sortable" onclick="sortTable('${tableId}',6,'num',this)">PnL Total</th>
+      </tr></thead><tbody>`;
+
+    const activePositions = positions.filter(p => (parseFloat(p.currentValue)||0) > 0.01);
+    activePositions.sort((a,b) => (parseFloat(b.cashPnl)||0) - (parseFloat(a.cashPnl)||0));
+    activePositions.forEach(p => {
+      const cashPnl = parseFloat(p.cashPnl) || 0;
+      const totPnl  = parseFloat(p.totalPnl) || parseFloat(p.cashPnl) || 0;
+      const outcome = (p.outcome||'').toUpperCase();
+      const isYes = outcome === 'YES';
+      const avgPrice  = parseFloat(p.avgPrice) || 0;
+      const size      = parseFloat(p.size) || 0;
+      const currVal   = parseFloat(p.currentValue) || 0;
+      // Preço Atual = Valor Atual - PnL Cash
+      const precoAtual = currVal - cashPnl;
+      html += `<tr>
+        <td data-val="${(p.title||p.market||'').toLowerCase()}"><div class="market-name">
+          <a href="https://polymarket.com/event/${p.conditionId||''}" target="_blank">${p.title || p.market || p.conditionId?.slice(0,20)+'...' || '—'}</a>
+        </div></td>
+        <td data-val="${outcome}"><span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}">${outcome||'—'}</span></td>
+        <td data-val="${avgPrice}"><span class="price-badge">${avgPrice > 0 ? (avgPrice*100).toFixed(1)+'¢' : '—'}</span></td>
+        <td data-val="${precoAtual}"><span class="price-badge">${fmt$(precoAtual)}</span></td>
+        <td data-val="${size}" class="pos-gray">${size > 0 ? size.toFixed(0) : '—'}</td>
+        <td data-val="${currVal}">${fmt$(currVal)}</td>
+        <td data-val="${totPnl}" class="${pnlClass(totPnl)}">${totPnl !== 0 ? pnlSign(totPnl)+fmt$(totPnl) : '—'}</td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  html += `</div>`;
+
+  html += `</div>`;
+
+  el.innerHTML = html;
+
+  // Draw charts
+  setTimeout(() => {
+    drawPnlSvgChart(idx, 'ALL');
+  }, 50);
+}
+
+// ─── Charts ───────────────────────────────────────────────────────
+function drawPieChart(idx, positions) {
+  const canvas = document.getElementById(`pie-${idx}`);
+  if (!canvas || positions.length === 0) return;
+  const W = canvas.parentElement.clientWidth - 40;
+  const H = 200;
+  canvas.width = W; canvas.height = H;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+
+  // Top 8 by value
+  const top = [...positions].sort((a,b) => (parseFloat(b.currentValue)||0) - (parseFloat(a.currentValue)||0)).slice(0,8);
+  const total = top.reduce((s,p) => s + (parseFloat(p.currentValue)||0), 0);
+  if (total <= 0) { ctx.fillStyle = '#555'; ctx.font = '12px Share Tech Mono'; ctx.fillText('Sem valor', 10, 20); return; }
+
+  const COLORS = ['#00e5a0','#4d9fff','#a855f7','#ffcc00','#ff3c5a','#ff9f1c','#00b4d8','#80ed99'];
+  const cx = H / 2, cy = H / 2, r = H * 0.38;
+  let angle = -Math.PI / 2;
+
+  ctx.fillStyle = '#07070d';
+  ctx.fillRect(0, 0, W, H);
+
+  top.forEach((p, i) => {
+    const val = parseFloat(p.currentValue) || 0;
+    const slice = (val / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, angle, angle + slice);
+    ctx.closePath();
+    ctx.fillStyle = COLORS[i % COLORS.length];
+    ctx.fill();
+    ctx.strokeStyle = '#07070d';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    angle += slice;
+  });
+
+  // Donut hole
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.55, 0, Math.PI * 2);
+  ctx.fillStyle = '#07070d';
+  ctx.fill();
+
+  // Center text
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 14px Rajdhani';
+  ctx.textAlign = 'center';
+  ctx.fillText('$' + (total >= 1000 ? (total/1000).toFixed(1)+'K' : total.toFixed(0)), cx, cy + 5);
+
+  // Legend
+  const lx = H + 12;
+  top.slice(0, 6).forEach((p, i) => {
+    const y = 18 + i * 26;
+    ctx.fillStyle = COLORS[i];
+    ctx.fillRect(lx, y - 7, 10, 10);
+    ctx.fillStyle = '#888';
+    ctx.font = '11px Share Tech Mono';
+    ctx.textAlign = 'left';
+    const label = (p.title || p.market || '').slice(0, 22);
+    ctx.fillText(label + '…', lx + 14, y + 3);
+    const val = parseFloat(p.currentValue) || 0;
+    ctx.fillStyle = '#ccc';
+    ctx.font = 'bold 11px Share Tech Mono';
+    ctx.textAlign = 'right';
+    ctx.fillText('$'+val.toFixed(0), W - 2, y + 3);
+    ctx.textAlign = 'left';
+  });
+}
+
+function drawBarChart(idx, positions) {
+  const canvas = document.getElementById(`bar-${idx}`);
+  if (!canvas || positions.length === 0) return;
+  const W = canvas.parentElement.clientWidth - 40;
+  const H = 200;
+  canvas.width = W; canvas.height = H;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#07070d';
+  ctx.fillRect(0, 0, W, H);
+
+  const top = [...positions]
+    .filter(p => parseFloat(p.cashPnl) !== 0)
+    .sort((a,b) => (parseFloat(b.cashPnl)||0) - (parseFloat(a.cashPnl)||0))
+    .slice(0, 10);
+
+  if (top.length === 0) {
+    ctx.fillStyle = '#555'; ctx.font = '11px Share Tech Mono';
+    ctx.fillText('Sem dados de PnL', 10, H/2);
+    return;
+  }
+
+  const pnls = top.map(p => parseFloat(p.cashPnl) || 0);
+  const maxAbs = Math.max(...pnls.map(Math.abs), 0.01);
+
+  const PAD = { top: 10, right: 10, bottom: 30, left: 10 };
+  const cW = W - PAD.left - PAD.right;
+  const cH = H - PAD.top - PAD.bottom;
+  const barW = Math.max(8, cW / top.length - 4);
+  const midY = PAD.top + cH / 2;
+
+  // Zero line
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(PAD.left, midY); ctx.lineTo(W - PAD.right, midY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  top.forEach((p, i) => {
+    const pnl = pnls[i];
+    const x = PAD.left + i * (cW / top.length) + (cW / top.length - barW) / 2;
+    const barH = (Math.abs(pnl) / maxAbs) * (cH / 2 - 4);
+    const y = pnl >= 0 ? midY - barH : midY;
+    ctx.fillStyle = pnl >= 0 ? 'rgba(0,229,160,0.8)' : 'rgba(255,60,90,0.8)';
+    ctx.fillRect(x, y, barW, barH);
+
+    ctx.fillStyle = '#555';
+    ctx.font = '9px Share Tech Mono';
+    ctx.textAlign = 'center';
+    ctx.save();
+    ctx.translate(x + barW/2, H - 4);
+    ctx.rotate(-Math.PI/4);
+    ctx.fillText((p.title || p.market || '').slice(0,12), 0, 0);
+    ctx.restore();
+
+    // Value label
+    ctx.fillStyle = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+    ctx.font = 'bold 9px Share Tech Mono';
+    ctx.textAlign = 'center';
+    const lbl = (pnl >= 0 ? '+' : '') + '$' + Math.abs(pnl).toFixed(1);
+    ctx.fillText(lbl, x + barW/2, pnl >= 0 ? y - 3 : y + barH + 10);
+  });
+}
+
+// ─── PnL Sparkline SVG ───────────────────────────────────────────
+function drawPnlSvgChart(idx, period) {
+  const svg = document.getElementById(`pnl-svg-${idx}`);
+  if (!svg) return;
+
+  const d = walletData[idx];
+  if (!d) return;
+
+  // Use real API series: { t: unix_seconds, p: pnl_value }
+  const series = Array.isArray(d.pnlSeries?.[period]) ? d.pnlSeries[period] : [];
+
+  svg.innerHTML = '';
+
+  if (series.length < 2) {
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', '200'); text.setAttribute('y', '45');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', '#555575');
+    text.setAttribute('font-size', '11');
+    text.setAttribute('font-family', 'Share Tech Mono, monospace');
+    text.textContent = 'sem dados para este período';
+    svg.appendChild(text);
+    return;
+  }
+
+  const W = 400, H = 80, pad = 4;
+  const xs = series.map(p => p.t);
+  const ys = series.map(p => p.p);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const rangeX = maxX - minX || 1;
+  const rangeY = maxY - minY || 0.01;
+
+  const toSX = x => pad + ((x - minX) / rangeX) * (W - 2 * pad);
+  const toSY = y => H - pad - ((y - minY) / rangeY) * (H - 2 * pad);
+
+  const finalPnl = ys[ys.length - 1];
+  const isPos = finalPnl >= 0;
+  const lineColor = isPos ? '#00e5a0' : '#ff3c5a';
+  const fillColor = isPos ? 'rgba(0,229,160,0.12)' : 'rgba(255,60,90,0.12)';
+
+  const coords = series.map((p, i) =>
+    `${i === 0 ? 'M' : 'L'} ${toSX(p.t).toFixed(1)} ${toSY(p.p).toFixed(1)}`
+  ).join(' ');
+
+  // Fill area
+  const firstX = toSX(series[0].t).toFixed(1);
+  const lastX  = toSX(series[series.length - 1].t).toFixed(1);
+  const fillPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  fillPath.setAttribute('d', `${coords} L ${lastX} ${H} L ${firstX} ${H} Z`);
+  fillPath.setAttribute('fill', fillColor);
+  svg.appendChild(fillPath);
+
+  // Gradient line
+  const gradId = `grad-${idx}-${period}`;
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+  grad.setAttribute('id', gradId);
+  grad.setAttribute('x1', '0%'); grad.setAttribute('x2', '100%');
+  grad.setAttribute('y1', '0%'); grad.setAttribute('y2', '0%');
+  const s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+  s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#a855f7');
+  const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+  s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', lineColor);
+  grad.appendChild(s1); grad.appendChild(s2);
+  defs.appendChild(grad);
+  svg.appendChild(defs);
+
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  line.setAttribute('d', coords);
+  line.setAttribute('fill', 'none');
+  line.setAttribute('stroke', `url(#${gradId})`);
+  line.setAttribute('stroke-width', '2');
+  line.setAttribute('stroke-linecap', 'round');
+  line.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(line);
+
+  // End dot
+  const last = series[series.length - 1];
+  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  dot.setAttribute('cx', toSX(last.t));
+  dot.setAttribute('cy', toSY(last.p));
+  dot.setAttribute('r', '3');
+  dot.setAttribute('fill', lineColor);
+  svg.appendChild(dot);
+
+  // Update PnL value on the card for this period
+  const pnlEl = document.getElementById(`pnl-card-val-${idx}`);
+  const triEl = document.getElementById(`pnl-card-tri-${idx}`);
+  const lblEl = document.getElementById(`pnl-card-lbl-${idx}`);
+  if (pnlEl) {
+    // delta = last value minus first value of the series
+    const periodPnl = ys[ys.length - 1] - ys[0];
+    const isP = periodPnl >= 0;
+    pnlEl.textContent = (isP ? '+' : '') + '$' +
+      Math.abs(periodPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    pnlEl.className = 'pnl-card-value ' + (isP ? 'pos-green' : 'pos-red');
+    if (triEl) { triEl.textContent = isP ? '▲' : '▼'; triEl.className = 'pnl-triangle ' + (isP ? 'pos' : 'neg'); }
+    if (lblEl) {
+      const labels = { '1D': 'Past Day', '1W': 'Past Week', '1M': 'Past Month', 'ALL': 'All-Time' };
+      lblEl.textContent = 'Profit / Loss · ' + (labels[period] || period);
+    }
+  }
+}
+
+function setPnlPeriod(btn, period, idx) {
+  btn.closest('.pnl-period-tabs').querySelectorAll('.pnl-ptab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  drawPnlSvgChart(idx, period);
+}
+
+// ─── Overview (all wallets side by side) ─────────────────────────
+function renderOverview() {
+  const el = document.getElementById('panel-overview');
+  if (!el) return;
+
+  function walletTotal(d) {
+    const posVal = (Array.isArray(d?.positions) ? d.positions : []).reduce((a,p) => a+(parseFloat(p.currentValue)||0), 0);
+    const onChain = typeof d?.usdcBalance === 'number' ? d.usdcBalance : 0;
+    const apiCash = d?.value ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance) || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0) : 0;
+    const cash = onChain >= 0.01 ? onChain : apiCash;
+    let total = posVal + cash;
+    if (cash < 0.01 && d?.value?.value) { const api = parseFloat(d.value.value)||0; if (api > posVal) total = api; }
+    return { total, posVal, cash };
+  }
+
+  let html = `<div class="fade-in">`;
+
+  // ── Hide toggle ─────────────────────────────────────────────────
+  html += `<div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+    <button class="ov-hide-btn" id="ov-hide-btn" onclick="toggleOvHide()">◉ OCULTAR VALORES</button>
+  </div>`;
+
+  // ── Row 1: one card per wallet ──────────────────────────────────
+  html += `<div class="overview-wallet-row">`;
+
+  WALLETS.forEach((w, i) => {
+    const d = walletData[i];
+    if (!d) { html += `<div class="ov-wallet-card" style="border-color:${w.color}20"><div class="ov-w-label" style="color:${w.color}">${w.label}</div><div style="color:var(--muted);font-size:12px;padding:20px 0">carregando…</div></div>`; return; }
+
+    const { total, posVal, cash } = walletTotal(d);
+    const lbRow   = Array.isArray(d.leaderboard) ? d.leaderboard[0] : null;
+    const pnl     = parseFloat(lbRow?.pnl || 0);
+    const vol     = parseFloat(lbRow?.vol || 0);
+    const name    = lbRow?.userName || w.label;
+    const rank    = lbRow?.rank ? '#' + parseInt(lbRow.rank).toLocaleString() : '—';
+    const closedOv = Array.isArray(d.closed) ? d.closed : [];
+    const closedOvIds = new Set(closedOv.map(p => p.conditionId).filter(Boolean));
+    const positions = (Array.isArray(d.positions) ? d.positions : []).filter(p => {
+      if (p.conditionId && closedOvIds.has(p.conditionId)) return false;
+      const cpRaw = p.currPrice ?? p.currentPrice ?? null;
+      if (cpRaw !== null) {
+        const cp = parseFloat(cpRaw) || 0;
+        if (cp >= 0.999) return false;
+      }
+      return (parseFloat(p.currentValue)||0) > 0.01;
+    });
+
+    html += `<div class="ov-wallet-card" style="--wc:${w.color}">
+      <div class="ov-w-header">
+        <div>
+          <div class="ov-w-label ov-hideable-name" style="color:${w.color}">${name}</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px">${w.short} · ${rank}</div>
+        </div>
+        <a href="https://polymarket.com/profile/${w.addr}" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:2px 6px;border-radius:2px">↗</a>
+      </div>
+
+      <div class="ov-total ov-hideable-num">${fmt$(total)}</div>
+
+      <div class="ov-breakdown">
+        <div class="ov-bitem"><div class="ov-blabel">Posições</div><div class="ov-bval ov-hideable-num">${fmt$(posVal)}</div></div>
+        <div class="ov-bitem"><div class="ov-blabel">Cash</div><div class="ov-bval ov-hideable-num" style="color:var(--blue)">${fmt$(cash)}</div></div>
+      </div>
+
+      <div class="ov-divider"></div>
+
+      <div class="ov-breakdown">
+        <div class="ov-bitem"><div class="ov-blabel">PnL</div><div class="ov-bval ov-hideable-num ${pnlClass(pnl)}">${pnlSign(pnl)}${fmt$(pnl)}</div></div>
+        <div class="ov-bitem"><div class="ov-blabel">Volume</div><div class="ov-bval ov-hideable-num">${fmt$(vol)}</div></div>
+      </div>
+
+      <div class="ov-divider"></div>
+
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;letter-spacing:1px">TOP POSIÇÕES</div>
+      ${positions.slice(0,3).map(p => {
+        const cv = parseFloat(p.currentValue)||0;
+        const cp = parseFloat(p.cashPnl)||0;
+        const outcome = (p.outcome||'').toUpperCase();
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px">
+          <div class="ov-hideable-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%;color:var(--text)">${(p.title||p.market||'—').slice(0,28)}</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+            <span class="outcome-tag ${outcome==='YES'?'outcome-yes':'outcome-no'}" style="font-size:9px;padding:1px 5px">${outcome||'—'}</span>
+            <span class="ov-hideable-num" style="color:#fff;font-weight:700">${fmt$(cv)}</span>
+            <span class="ov-hideable-num ${pnlClass(cp)}" style="font-size:11px">${cp!==0?pnlSign(cp)+fmt$(cp):''}</span>
+          </div>
+        </div>`;
+      }).join('')}
+      ${positions.length === 0 ? '<div style="color:var(--muted);font-size:11px;padding:8px 0">sem posições abertas</div>' : ''}
+    </div>`;
+  });
+
+  html += `</div>`;
+
+  // ── Row 2: PnL charts side by side ─────────────────────────────
+  html += `<div class="ov-pnl-row">`;
+  WALLETS.forEach((w, i) => {
+    const d = walletData[i];
+    const lbRow = d ? (Array.isArray(d.leaderboard) ? d.leaderboard[0] : null) : null;
+    const pnl = parseFloat(lbRow?.pnl || 0);
+    html += `<div class="pnl-chart-card" style="min-height:140px">
+      <div class="pnl-card-top">
+        <div class="pnl-card-left">
+          <div class="pnl-value-row">
+            <span class="pnl-triangle ${pnl>=0?'pos':'neg'}">${pnl>=0?'▲':'▼'}</span>
+            <div class="pnl-card-value ${pnlClass(pnl)}" id="ov-pnl-val-${i}">${pnlSign(pnl)}${fmt$(pnl)}</div>
+          </div>
+          <div class="pnl-card-period" id="ov-pnl-lbl-${i}">Profit / Loss · All-Time</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${w.color};margin-top:4px">${w.label}</div>
+        </div>
+        <div class="pnl-period-tabs">
+          <button class="pnl-ptab" onclick="setOvPeriod(this,'1D',${i})">1D</button>
+          <button class="pnl-ptab" onclick="setOvPeriod(this,'1W',${i})">1W</button>
+          <button class="pnl-ptab" onclick="setOvPeriod(this,'1M',${i})">1M</button>
+          <button class="pnl-ptab active" onclick="setOvPeriod(this,'ALL',${i})">ALL</button>
+        </div>
+      </div>
+      <div class="pnl-chart-area">
+        <svg id="ov-svg-${i}" viewBox="0 0 400 80" preserveAspectRatio="none" style="width:100%;height:80px;display:block;overflow:visible"></svg>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // ── Row 3: Trader stats banners (sorted by volume desc) ─────────
+  const bannerData = WALLETS.map((w, i) => {
+    const d = walletData[i];
+    const lbRow = d ? (Array.isArray(d.leaderboard) ? d.leaderboard[0] : null) : null;
+    const pnl    = parseFloat(lbRow?.pnl || 0);
+    const vol    = parseFloat(lbRow?.vol || 0);
+    const name   = lbRow?.userName || w.label;
+    const rank   = lbRow?.rank ? '#' + parseInt(lbRow.rank).toLocaleString() : '—';
+    const closed = Array.isArray(d?.closed) ? d.closed : [];
+    const bigWin = closed.length > 0 ? Math.max(...closed.map(p => parseFloat(p.realizedPnl)||0)) : 0;
+    return { w, i, pnl, vol, name, rank, bigWin };
+  }).sort((a, b) => b.vol - a.vol);
+
+  html += `<div class="ov-trader-row">`;
+  bannerData.forEach(({ w, pnl, vol, name, rank, bigWin }) => {
+    html += `<div class="ov-trader-banner" style="border-left:3px solid ${w.color}">
+      <div class="ov-ts-item" style="max-width:180px;margin-right:4px">
+        <div class="ov-ts-label">◈ Trader</div>
+        <div class="ov-ts-val ov-hideable-name" style="color:${w.color}">${name}</div>
+      </div>
+      <div class="ov-ts-sep"></div>
+      <div class="ov-ts-item">
+        <div class="ov-ts-label">⬡ Volume Tradado</div>
+        <div class="ov-ts-val ov-hideable-num">${vol > 0 ? fmt$(vol) : '—'}</div>
+      </div>
+      <div class="ov-ts-sep"></div>
+      <div class="ov-ts-item">
+        <div class="ov-ts-label">▲ PnL All-Time</div>
+        <div class="ov-ts-val ov-hideable-num ${pnlClass(pnl)}">${pnlSign(pnl)}${fmt$(pnl)}</div>
+      </div>
+      <div class="ov-ts-sep"></div>
+      <div class="ov-ts-item">
+        <div class="ov-ts-label">✦ Maior Ganho</div>
+        <div class="ov-ts-val ov-hideable-num ${bigWin > 0 ? 'pos-green' : ''}">${bigWin > 0 ? '+'+fmt$(bigWin) : '—'}</div>
+      </div>
+      <div class="ov-ts-sep"></div>
+      <div class="ov-ts-item">
+        <div class="ov-ts-label">⚑ Rank Global</div>
+        <div class="ov-ts-val ov-hideable-num" style="color:var(--yellow)">${rank}</div>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `</div>`;
+  el.innerHTML = html;
+
+  // Draw all charts
+  setTimeout(() => {
+    WALLETS.forEach((w, i) => drawOvChart(i, 'ALL'));
+  }, 60);
+}
+
+function drawOvChart(idx, period) {
+  const svg = document.getElementById(`ov-svg-${idx}`);
+  if (!svg) return;
+  const d = walletData[idx];
+  if (!d) return;
+
+  const series = Array.isArray(d.pnlSeries?.[period]) ? d.pnlSeries[period] : [];
+  svg.innerHTML = '';
+
+  if (series.length < 2) {
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x','200'); t.setAttribute('y','40');
+    t.setAttribute('text-anchor','middle'); t.setAttribute('fill','#555575');
+    t.setAttribute('font-size','10'); t.textContent = 'sem dados';
+    svg.appendChild(t); return;
+  }
+
+  const W=400,H=80,pad=4;
+  const xs=series.map(p=>p.t), ys=series.map(p=>p.p);
+  const minX=Math.min(...xs),maxX=Math.max(...xs);
+  const minY=Math.min(...ys),maxY=Math.max(...ys);
+  const rX=maxX-minX||1, rY=maxY-minY||0.01;
+  const toSX=x=>pad+((x-minX)/rX)*(W-2*pad);
+  const toSY=y=>H-pad-((y-minY)/rY)*(H-2*pad);
+
+  const finalPnl=ys[ys.length-1];
+  const isPos=finalPnl>=0;
+  const lc=isPos?'#00e5a0':'#ff3c5a';
+  const fc=isPos?'rgba(0,229,160,0.12)':'rgba(255,60,90,0.12)';
+  const coords=series.map((p,i)=>`${i===0?'M':'L'} ${toSX(p.t).toFixed(1)} ${toSY(p.p).toFixed(1)}`).join(' ');
+
+  const fX=toSX(series[0].t).toFixed(1), lX=toSX(series[series.length-1].t).toFixed(1);
+  const fp=document.createElementNS('http://www.w3.org/2000/svg','path');
+  fp.setAttribute('d',`${coords} L ${lX} ${H} L ${fX} ${H} Z`);
+  fp.setAttribute('fill',fc); svg.appendChild(fp);
+
+  const gId=`ov-grad-${idx}-${period}`;
+  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+  const g=document.createElementNS('http://www.w3.org/2000/svg','linearGradient');
+  g.setAttribute('id',gId); g.setAttribute('x1','0%'); g.setAttribute('x2','100%');
+  g.setAttribute('y1','0%'); g.setAttribute('y2','0%');
+  const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');
+  s1.setAttribute('offset','0%'); s1.setAttribute('stop-color','#a855f7');
+  const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');
+  s2.setAttribute('offset','100%'); s2.setAttribute('stop-color',lc);
+  g.appendChild(s1); g.appendChild(s2); defs.appendChild(g); svg.appendChild(defs);
+
+  const ln=document.createElementNS('http://www.w3.org/2000/svg','path');
+  ln.setAttribute('d',coords); ln.setAttribute('fill','none');
+  ln.setAttribute('stroke',`url(#${gId})`); ln.setAttribute('stroke-width','2');
+  ln.setAttribute('stroke-linecap','round'); ln.setAttribute('stroke-linejoin','round');
+  svg.appendChild(ln);
+
+  const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('cx',toSX(series[series.length-1].t));
+  dot.setAttribute('cy',toSY(series[series.length-1].p));
+  dot.setAttribute('r','3'); dot.setAttribute('fill',lc); svg.appendChild(dot);
+
+  // Update value label
+  const pnlEl=document.getElementById(`ov-pnl-val-${idx}`);
+  const lblEl=document.getElementById(`ov-pnl-lbl-${idx}`);
+  if (pnlEl) {
+    const delta=ys[ys.length-1]-ys[0];
+    const isP=delta>=0;
+    pnlEl.textContent=(isP?'+':'')+'\$'+Math.abs(delta).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    pnlEl.className='pnl-card-value '+(isP?'pos-green':'pos-red');
+  }
+  if (lblEl) {
+    const labels={'1D':'Past Day','1W':'Past Week','1M':'Past Month','ALL':'All-Time'};
+    lblEl.textContent='Profit / Loss · '+(labels[period]||period);
+  }
+}
+
+function setOvPeriod(btn, period, idx) {
+  btn.closest('.pnl-period-tabs').querySelectorAll('.pnl-ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  drawOvChart(idx, period);
+}
+
+// ─── Live Panel (all wallets on-chain) ────────────────────────────
+function renderLive() {
+  const el = document.getElementById('panel-live');
+  if (!el) return;
+
+  function walletInfo(d, i) {
+    const w = WALLETS[i];
+    const rawPos = Array.isArray(d?.positions) ? d.positions : [];
+    const closed = Array.isArray(d?.closed) ? d.closed : [];
+    const closedIds = new Set(closed.map(p => p.conditionId).filter(Boolean));
+    const positions = rawPos.filter(p => {
+      if (p.conditionId && closedIds.has(p.conditionId)) return false;
+      const cpRaw = p.currPrice ?? p.currentPrice ?? null;
+      if (cpRaw !== null) {
+        const cp = parseFloat(cpRaw) || 0;
+        if (cp >= 0.999) return false;
+      }
+      return true;
+    });
+    const posVal = positions.reduce((a,p) => a+(parseFloat(p.currentValue)||0), 0);
+    const onChain = typeof d?.usdcBalance === 'number' ? d.usdcBalance : 0;
+    const apiCash = d?.value ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance) || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0) : 0;
+    const cash = onChain >= 0.01 ? onChain : apiCash;
+    const cashSrc = onChain >= 0.01 ? 'on-chain' : (apiCash > 0 ? 'api' : 'none');
+    let total = posVal + cash;
+    if (cash < 0.01 && d?.value?.value) { const api = parseFloat(d.value.value)||0; if (api > posVal) total = api; }
+    const lb = Array.isArray(d?.leaderboard) ? d.leaderboard[0] : null;
+    const pnl = parseFloat(lb?.pnl || 0);
+    const vol = parseFloat(lb?.vol || 0);
+    const rank = lb?.rank ? parseInt(lb.rank) : null;
+    const name = lb?.userName || w.label;
+    const posCount = positions.filter(p => (parseFloat(p.currentValue)||0) > 0.01).length;
+    const closedCount = closed.length;
+    const wins = closed.filter(p => (parseFloat(p.realizedPnl)||0) > 0).length;
+    const winRate = closedCount > 0 ? ((wins / closedCount) * 100).toFixed(0) : '—';
+    const exposure = total > 0 ? ((posVal / total) * 100).toFixed(0) : '0';
+    const activity = Array.isArray(d?.activity) ? d.activity : [];
+    return { w, total, posVal, cash, cashSrc, pnl, vol, rank, name, posCount, closedCount, wins, winRate, exposure, activity, positions };
+  }
+
+  const infos = WALLETS.map((w, i) => walletData[i] ? walletInfo(walletData[i], i) : null);
+
+  // Totals
+  const grandTotal = infos.reduce((s, info) => s + (info?.total || 0), 0);
+  const grandCash = infos.reduce((s, info) => s + (info?.cash || 0), 0);
+  const grandPos = infos.reduce((s, info) => s + (info?.posVal || 0), 0);
+  const grandPnl = infos.reduce((s, info) => s + (info?.pnl || 0), 0);
+  const grandVol = infos.reduce((s, info) => s + (info?.vol || 0), 0);
+  const totalOpenPos = infos.reduce((s, info) => s + (info?.posCount || 0), 0);
+
+  let html = `<div class="fade-in">`;
+
+  // ── Header ──
+  html += `<div class="onchain-panel" style="border-radius:6px;margin-bottom:20px">
+    <div class="onchain-header" style="padding-bottom:0">
+      <div class="onchain-title-row">
+        <span class="onchain-live-dot"></span>
+        <span class="onchain-title">MULTI-WALLET · ON-CHAIN LIVE</span>
+        <span class="onchain-network">⬡ POLYGON</span>
+        <span style="margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${WALLETS.length} wallets</span>
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="live-summary-grid">
+      <div class="live-summary-cell">
+        <div class="live-summary-label">Portfolio Total</div>
+        <div class="live-summary-val">${fmt$(grandTotal)}</div>
+        <div class="live-summary-sub">posições + cash</div>
+      </div>
+      <div class="live-summary-cell">
+        <div class="live-summary-label">Cash Disponível</div>
+        <div class="live-summary-val" style="color:var(--blue)">${fmt$(grandCash)}</div>
+        <div class="live-summary-sub">para trade</div>
+      </div>
+      <div class="live-summary-cell">
+        <div class="live-summary-label">Em Posições</div>
+        <div class="live-summary-val">${fmt$(grandPos)}</div>
+        <div class="live-summary-sub">${totalOpenPos} abertas</div>
+      </div>
+      <div class="live-summary-cell">
+        <div class="live-summary-label">PnL Total</div>
+        <div class="live-summary-val ${pnlClass(grandPnl)}">${pnlSign(grandPnl)}${fmt$(grandPnl)}</div>
+        <div class="live-summary-sub">all-time</div>
+      </div>
+      <div class="live-summary-cell">
+        <div class="live-summary-label">Volume Total</div>
+        <div class="live-summary-val">${fmt$(grandVol)}</div>
+        <div class="live-summary-sub">all-time</div>
+      </div>
+    </div>
+
+    <!-- Wallets table -->
+    <div class="t-scroll">
+    <table class="live-table">
+      <thead><tr>
+        <th>Wallet</th>
+        <th>Portfolio</th>
+        <th>Disponível</th>
+        <th>Posições</th>
+        <th>PnL</th>
+        <th>Volume</th>
+      </tr></thead>
+      <tbody>`;
+
+  infos.forEach((info, i) => {
+    if (!info) {
+      html += `<tr><td colspan="6" style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px">
+        <span style="color:${WALLETS[i].color}">${WALLETS[i].label}</span> · carregando…
+      </td></tr>`;
+      return;
+    }
+    const { w, total, posVal, cash, cashSrc, pnl, vol, rank, name, posCount, closedCount, wins, winRate } = info;
+
+    html += `<tr>
+      <td>
+        <div class="live-wallet-cell">
+          <div class="live-wallet-dot" style="background:${w.color}"></div>
+          <div class="live-wallet-info">
+            <div class="live-wallet-name" style="color:${w.color}">${name}</div>
+            <div class="live-wallet-sub">
+              ${w.short}
+              ${rank ? `<span class="live-rank-badge">#${rank.toLocaleString()}</span>` : ''}
+            </div>
+          </div>
+        </div>
+      </td>
+      <td style="font-weight:700;color:#fff;font-size:17px">${fmt$(total)}</td>
+      <td>
+        <span style="font-weight:700;color:var(--blue)">${fmt$(cash)}</span>
+        <span class="live-cash-tag" style="color:${cashSrc==='on-chain'?'var(--green)':'var(--yellow)'}">${cashSrc==='on-chain'?'⬡ verified':'~ est'}</span>
+      </td>
+      <td>
+        <span style="font-weight:700">${fmt$(posVal)}</span>
+        <span class="live-pos-tag" style="color:${w.color}">${posCount} abertas</span>
+      </td>
+      <td class="${pnlClass(pnl)}" style="font-weight:700">${pnlSign(pnl)}${fmt$(pnl)}</td>
+      <td style="font-weight:500">${vol > 0 ? fmt$(vol) : '—'}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div></div>`;
+
+  // ── Activity feed (all wallets merged) ──
+  const allActivity = infos.flatMap((info, i) =>
+    (info?.activity || []).slice(0, 8).map(a => ({ ...a, _wi: i }))
+  ).filter(a => {
+    const type = (a.type || '').toUpperCase();
+    return !type.includes('REDEEM');
+  }).sort((a, b) => {
+    const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
+    const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
+    return tB - tA;
+  }).slice(0, 20);
+
+  html += `<div style="height:12px"></div>`;
+
+  html += `<div class="onchain-panel" style="border-radius:6px">
+    <div class="onchain-activity">
+      <div class="onchain-activity-header">
+        <span class="onchain-live-dot" style="width:5px;height:5px"></span>
+        <span>ATIVIDADE RECENTE · TODAS AS WALLETS</span>
+        <span style="color:var(--muted);font-size:11px;margin-left:auto">${allActivity.length} eventos</span>
+      </div>
+      <div class="onchain-activity-list">`;
+
+  if (allActivity.length === 0) {
+    html += `<div class="empty-state" style="padding:20px">Nenhuma atividade recente</div>`;
+  } else {
+    allActivity.forEach((a, ai) => {
+      const ww = WALLETS[a._wi];
+      const type = (a.type || '').toUpperCase();
+      const isRedeem = type.includes('REDEEM');
+      const isSell = type.includes('SELL') || isRedeem;
+      let icon, tagColor;
+      if (isRedeem)    { icon = '★'; tagColor = 'var(--blue)'; }
+      else if (isSell) { icon = '▼'; tagColor = 'var(--red)'; }
+      else             { icon = '▲'; tagColor = 'var(--green)'; }
+      const outcome = (a.outcome || '').toUpperCase();
+      const isYes = outcome === 'YES';
+      const price = parseFloat(a.price) || 0;
+      const usdcSize = parseFloat(a.usdcSize || a.amount) || 0;
+      html += `<div class="onchain-act-row${ai === 0 ? ' onchain-act-latest' : ''}">
+        <span style="color:${ww.color};font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;min-width:28px">${ww.label}</span>
+        <div class="onchain-act-icon" style="color:${tagColor}">${icon}</div>
+        <div class="onchain-act-type" style="color:${tagColor}">${type||'—'}</div>
+        ${outcome ? `<span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}" style="font-size:10px;padding:2px 6px">${outcome}</span>` : ''}
+        <div class="onchain-act-market">${a.title || a.market || '—'}</div>
+        <div class="onchain-act-val">${usdcSize > 0 ? fmt$(usdcSize) : ''}${price > 0 ? ' @ '+(price*100).toFixed(1)+'¢' : ''}</div>
+        <div class="onchain-act-time">${fmtDate(a.timestamp || a.createdAt)}</div>
+      </div>`;
+    });
+  }
+
+  html += `</div></div></div>`;
+  html += `</div>`;
+
+  el.innerHTML = html;
+}
+
+// ─── Combined view ────────────────────────────────────────────────
+function renderCombined() {
+  const el = document.getElementById('panel-combined');
+  if (!el) return;
+
+  const allClosed = walletData.flatMap((d, i) =>
+    (Array.isArray(d?.closed) ? d.closed : []).map(p => ({ ...p, _walletIdx: i }))
+  );
+
+  // Filter out resolved/closed positions from open list (same logic as renderWallet)
+  const allClosedCondIds = new Set(allClosed.map(p => p.conditionId).filter(Boolean));
+  const allPositions = walletData.flatMap((d, i) =>
+    (Array.isArray(d?.positions) ? d.positions : []).filter(p => {
+      if (p.conditionId && allClosedCondIds.has(p.conditionId)) return false;
+      const cpRaw = p.currPrice ?? p.currentPrice ?? null;
+      if (cpRaw !== null) {
+        const cp = parseFloat(cpRaw) || 0;
+        if (cp >= 0.999) return false;
+      }
+      return true;
+    }).map(p => ({ ...p, _walletIdx: i }))
+  );
+
+  function walletTotal(d) {
+    const posVal = (Array.isArray(d?.positions) ? d.positions : []).reduce((a,p) => a+(parseFloat(p.currentValue)||0), 0);
+    const onChain = typeof d?.usdcBalance === 'number' ? d.usdcBalance : 0;
+    const apiCash = d?.value ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance) || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0) : 0;
+    const cash = onChain >= 0.01 ? onChain : apiCash;
+    let total = posVal + cash;
+    if (cash < 0.01 && d?.value?.value) { const api = parseFloat(d.value.value)||0; if (api > posVal) total = api; }
+    return total;
+  }
+
+  const totalValue   = walletData.reduce((s,d) => s + walletTotal(d), 0);
+  const totalPnl     = allPositions.reduce((s,p) => s + (parseFloat(p.cashPnl)||0), 0)
+                     + allClosed.reduce((s,p) => s + (parseFloat(p.realizedPnl)||0), 0);
+  const unrealized   = allPositions.reduce((s,p) => s + (parseFloat(p.cashPnl)||0), 0);
+  const realized     = allClosed.reduce((s,p) => s + (parseFloat(p.realizedPnl)||0), 0);
+  const invested     = allPositions.reduce((s,p) => s + (parseFloat(p.totalBought)||0), 0);
+
+  let html = `<div class="fade-in">`;
+
+  // Wallet chips
+  html += `<div class="combined-header">`;
+  WALLETS.forEach((w, i) => {
+    const d = walletData[i];
+    const val = walletTotal(d);
+    html += `<div class="wallet-chip" style="border-color:${w.color};color:${w.color}">
+      <span style="width:6px;height:6px;border-radius:50%;background:${w.color}"></span>
+      ${w.label} · ${fmt$(val)}
+    </div>`;
+  });
+  html += `</div>`;
+
+  // KPIs
+  html += `<div class="kpi-grid">
+    <div class="kpi" style="--kc:#fff">
+      <div class="kpi-label">Portfolio Total</div>
+      <div class="kpi-val neutral glow">${fmt$(totalValue)}</div>
+      <div class="kpi-sub">${WALLETS.length} wallets combinadas</div>
+    </div>
+    <div class="kpi" style="--kc:${totalPnl>=0?'var(--green)':'var(--red)'}">
+      <div class="kpi-label">PnL Total</div>
+      <div class="kpi-val ${pnlClass(totalPnl)}">${pnlSign(totalPnl)}${fmt$(totalPnl)}</div>
+      <div class="kpi-sub">${invested > 0 ? fmtPct(totalPnl/invested*100)+' sobre investido' : ''}</div>
+    </div>
+    <div class="kpi" style="--kc:${unrealized>=0?'var(--green)':'var(--red)'}">
+      <div class="kpi-label">Não Realizado</div>
+      <div class="kpi-val ${pnlClass(unrealized)}">${pnlSign(unrealized)}${fmt$(unrealized)}</div>
+      <div class="kpi-sub">${allPositions.length} posições abertas</div>
+    </div>
+    <div class="kpi" style="--kc:${realized>=0?'var(--green)':'var(--red)'}">
+      <div class="kpi-label">Realizado</div>
+      <div class="kpi-val ${pnlClass(realized)}">${pnlSign(realized)}${fmt$(realized)}</div>
+      <div class="kpi-sub">${allClosed.length} posições fechadas</div>
+    </div>
+    <div class="kpi" style="--kc:var(--blue)">
+      <div class="kpi-label">Investido Total</div>
+      <div class="kpi-val neutral">${fmt$(invested)}</div>
+      <div class="kpi-sub">abertas somadas</div>
+    </div>
+    <div class="kpi" style="--kc:var(--yellow)">
+      <div class="kpi-label">Melhor Posição</div>`;
+
+  const best = allPositions.sort((a,b)=>(parseFloat(b.cashPnl)||0)-(parseFloat(a.cashPnl)||0))[0];
+  if (best) {
+    const bw = WALLETS[best._walletIdx];
+    html += `<div class="kpi-val pos-green">+${fmt$(parseFloat(best.cashPnl)||0)}</div>
+      <div class="kpi-sub" style="color:${bw.color}">${bw.label} · ${(best.title||best.market||'').slice(0,20)}</div>`;
+  } else { html += `<div class="kpi-val neutral">—</div>`; }
+  html += `</div></div>`;
+
+  // All positions table
+  html += `<div class="table-wrap">
+    <div class="table-header">
+      <span class="table-header-title">Todas as Posições Abertas</span>
+      <span class="table-count">${allPositions.length}</span>
+    </div>
+    <div class="t-scroll"><table>
+      <thead><tr>
+        <th>Wallet</th><th>Mercado</th><th>Outcome</th>
+        <th>Preço Médio</th><th>Preço Atual</th><th>Valor</th><th>PnL</th>
+      </tr></thead><tbody>`;
+
+  allPositions.sort((a,b) => (parseFloat(b.cashPnl)||0)-(parseFloat(a.cashPnl)||0)).forEach(p => {
+    const w = WALLETS[p._walletIdx];
+    const cashPnl = parseFloat(p.cashPnl) || 0;
+    const outcome = (p.outcome||'').toUpperCase();
+    const isYes = outcome === 'YES';
+    const currPrice = parseFloat(p.currPrice || p.currentPrice) || 0;
+    const avgPrice  = parseFloat(p.avgPrice) || 0;
+    const currVal   = parseFloat(p.currentValue) || 0;
+    html += `<tr>
+      <td><span style="color:${w.color};font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700">${w.label}</span></td>
+      <td><div class="market-name">${p.title || p.market || p.conditionId?.slice(0,20)+'...' || '—'}</div></td>
+      <td><span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}">${outcome||'—'}</span></td>
+      <td><span class="price-badge">${avgPrice>0?(avgPrice*100).toFixed(1)+'¢':'—'}</span></td>
+      <td><span class="price-badge" style="color:${currPrice>avgPrice?'var(--green)':currPrice<avgPrice?'var(--red)':'inherit'}">${currPrice>0?(currPrice*100).toFixed(1)+'¢':'—'}</span></td>
+      <td>${fmt$(currVal)}</td>
+      <td class="${pnlClass(cashPnl)}">${cashPnl!==0?pnlSign(cashPnl)+fmt$(cashPnl):'—'}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div></div>`;
+  html += `</div>`;
+
+  el.innerHTML = html;
+}
+
+// ─── Tab nav ──────────────────────────────────────────────────────
+function showWallet(idx) {
+  currentTab = idx;
+  document.querySelectorAll('.wtab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.wtab[data-wallet="${idx}"]`).classList.add('active');
+  document.querySelectorAll('.wallet-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${idx}`).classList.add('active');
+  if (idx === 'overview') renderOverview();
+  if (idx === 'live') renderLive();
+}
+
+// ─── Card refresh handler ────────────────────────────────────────
+async function handleCardRefresh(btnEl) {
+  btnEl.classList.add('spinning');
+  btnEl.disabled = true;
+  await loadAll();
+  // spinning will be gone since the card re-renders
+}
+
+// ─── Init ─────────────────────────────────────────────────────────
+function buildPanels() {
+  const container = document.getElementById('mainContent');
+  const act = currentTab;
+  let html = '';
+  WALLETS.forEach((w, i) => {
+    html += `<div class="wallet-panel${act===i?' active':''}" id="panel-${i}">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>CARREGANDO ${w.label} · ${w.short}</p>
+      </div>
+    </div>`;
+  });
+  html += `<div class="wallet-panel${act==='overview'?' active':''}" id="panel-overview">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>CARREGANDO OVERVIEW…</p>
+    </div>
+  </div>`;
+  html += `<div class="wallet-panel${act==='live'?' active':''}" id="panel-live">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>CARREGANDO LIVE DATA…</p>
+    </div>
+  </div>`;
+  html += `<div class="wallet-panel${act==='combined'?' active':''}" id="panel-combined">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>CARREGANDO DADOS COMBINADOS…</p>
+    </div>
+  </div>`;
+  container.innerHTML = html;
+}
+
+async function loadAll() {
+
+  const activeTab = currentTab;
+
+  buildPanels();
+
+  const promises = WALLETS.map((w, i) =>
+    loadWallet(i).then(() => {
+      renderWallet(i);
+    }).catch(e => {
+      console.error('Error loading wallet', i, e);
+    })
+  );
+
+  await Promise.all(promises);
+  renderCombined();
+  renderLive();
+  renderOverview();
+
+  showWallet(activeTab);
+
+  document.getElementById('lastUpdate').textContent =
+    'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+
+  // Check for new trades and show toast notifications
+  checkForNewTrades();
+
+  // ─── USDC retry pass ───────────────────────────────────────────
+  const retryIndices = [];
+  walletData.forEach((d, i) => {
+    if (d && (typeof d.usdcBalance !== 'number' || d.usdcBalance < 0.01)) {
+      retryIndices.push(i);
+    }
+  });
+
+  if (retryIndices.length > 0) {
+    console.log('USDC retry pass for wallets:', retryIndices.map(i => `W${i+1}`).join(', '));
+    for (const i of retryIndices) {
+      await new Promise(r => setTimeout(r, 500));
+      const bal = await fetchUsdcBalance(WALLETS[i].addr, 2, 0);
+      if (bal >= 0.01 && walletData[i]) {
+        console.log(`USDC retry success for W${i+1}: $${bal.toFixed(2)}`);
+        walletData[i].usdcBalance = bal;
+        renderWallet(i);
+      }
+    }
+    renderCombined();
+    renderLive();
+    renderOverview();
+    showWallet(currentTab);
+  }
+}
+
+// ─── Overview refresh ─────────────────────────────────────────────
+async function ovRefresh(btnEl) {
+  btnEl.classList.add('spinning');
+  btnEl.disabled = true;
+  currentTab = 'overview';          // lock on overview
+  await loadAll();                   // loadAll restores currentTab at the end
+  const btn = document.getElementById('ov-refresh-btn');
+  if (btn) { btn.classList.remove('spinning'); btn.disabled = false; }
+}
+
+// ─── Overview hide toggle ─────────────────────────────────────────
+let _ovHidden = false;
+function toggleOvHide() {
+  _ovHidden = !_ovHidden;
+
+  // NUMBERS: blur (mantém cor, não dá pra ler o valor)
+  document.querySelectorAll('.ov-hideable-num').forEach(el => {
+    el.style.filter = _ovHidden ? 'blur(6px)' : '';
+    el.style.userSelect = _ovHidden ? 'none' : '';
+  });
+
+  // PnL inside charts: blur também
+  WALLETS.forEach((w, i) => {
+    const pnlEl = document.getElementById(`ov-pnl-val-${i}`);
+    if (pnlEl) {
+      pnlEl.style.filter = _ovHidden ? 'blur(6px)' : '';
+      pnlEl.style.userSelect = _ovHidden ? 'none' : '';
+    }
+  });
+
+  // TITLES (market names): swap text to ···
+  document.querySelectorAll('.ov-hideable-title').forEach(el => {
+    if (_ovHidden) {
+      el.dataset.origTitle = el.textContent;
+      el.textContent = '···';
+    } else {
+      if (el.dataset.origTitle !== undefined) el.textContent = el.dataset.origTitle;
+    }
+  });
+
+  // WALLET NAMES: swap to W1/W2/W3
+  document.querySelectorAll('.ov-hideable-name').forEach((el, idx) => {
+    if (_ovHidden) {
+      el.dataset.origName = el.textContent;
+      el.textContent = `W${idx + 1}`;
+      el.style.color = 'var(--muted)';
+    } else {
+      if (el.dataset.origName !== undefined) el.textContent = el.dataset.origName;
+      el.style.color = '';
+    }
+  });
+
+  const btn = document.getElementById('ov-hide-btn');
+  if (btn) btn.textContent = _ovHidden ? '◎ MOSTRAR VALORES' : '◉ OCULTAR VALORES';
+}
+
+// ─── Sortable table ───────────────────────────────────────────────
+const _sortState = {};
+function sortTable(tableId, colIdx, type, thEl) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const key = tableId + '_' + colIdx;
+  const prev = _sortState[key] || 'none';
+  const dir  = prev === 'asc' ? 'desc' : 'asc';
+  _sortState[key] = dir;
+
+  // Update header classes
+  table.querySelectorAll('th').forEach(th => {
+    th.classList.remove('sort-asc','sort-desc');
+  });
+  thEl.classList.add(dir === 'asc' ? 'sort-asc' : 'sort-desc');
+
+  const tbody = table.querySelector('tbody');
+  const rows  = Array.from(tbody.querySelectorAll('tr'));
+  rows.sort((a, b) => {
+    const aCell = a.cells[colIdx];
+    const bCell = b.cells[colIdx];
+    let aVal = (aCell?.dataset?.val ?? aCell?.textContent ?? '').trim();
+    let bVal = (bCell?.dataset?.val ?? bCell?.textContent ?? '').trim();
+    if (type === 'num') {
+      aVal = parseFloat(aVal) || 0;
+      bVal = parseFloat(bVal) || 0;
+      return dir === 'asc' ? aVal - bVal : bVal - aVal;
+    } else {
+      return dir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    }
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+// ─── Trade Notification Toast ─────────────────────────────────────
+// City slug → image mapping for Polymarket weather markets
+const CITY_IMAGES = {
+  'miami':        'https://images.unsplash.com/photo-1514214246283-d427a95c5d2f?w=500&h=220&fit=crop',
+  'atlanta':      'https://images.unsplash.com/photo-1611106014123-092d7642f560?w=500&h=220&fit=crop',
+  'dubai':        'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=500&h=220&fit=crop',
+  'tokyo':        'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=500&h=220&fit=crop',
+  'london':       'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=500&h=220&fit=crop',
+  'sao paulo':    'https://images.unsplash.com/photo-1629984557780-4dde2292e245?w=500&h=220&fit=crop',
+  'new york':     'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=500&h=220&fit=crop',
+  'nyc':          'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=500&h=220&fit=crop',
+  'sydney':       'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=500&h=220&fit=crop',
+  'chicago':      'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=500&h=220&fit=crop',
+  'los angeles':  'https://images.unsplash.com/photo-1534190760961-74e8c1c5c3da?w=500&h=220&fit=crop',
+  'paris':        'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500&h=220&fit=crop',
+  'berlin':       'https://images.unsplash.com/photo-1560969184-10fe8719e047?w=500&h=220&fit=crop',
+  'beijing':      'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=500&h=220&fit=crop',
+  'mumbai':       'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=500&h=220&fit=crop',
+  'singapore':    'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=500&h=220&fit=crop',
+  'toronto':      'https://images.unsplash.com/photo-1507992781348-310259076fe0?w=500&h=220&fit=crop',
+  'istanbul':     'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=500&h=220&fit=crop',
+  'rio':          'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=500&h=220&fit=crop',
+  'rio de janeiro':'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=500&h=220&fit=crop',
+  'washington':   'https://images.unsplash.com/photo-1617581629397-a72507c3de9e?w=500&h=220&fit=crop',
+  'san francisco':'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=500&h=220&fit=crop',
+  'bangkok':      'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=500&h=220&fit=crop',
+  'rome':         'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=500&h=220&fit=crop',
+  'moscow':       'https://images.unsplash.com/photo-1513326738677-b964603b136d?w=500&h=220&fit=crop',
+  'dallas':       'https://plus.unsplash.com/premium_photo-1697729753410-667607f7afd4?w=500&h=220&fit=crop',
+  'denver':       'https://images.unsplash.com/photo-1587096085496-2d0e48bc8ac1?w=500&h=220&fit=crop',
+  'phoenix':      'https://plus.unsplash.com/premium_photo-1742464825710-e9d978b8a389?w=500&h=220&fit=crop',
+  'seattle':      'https://images.unsplash.com/photo-1502175353174-a7a70e73b362?w=500&h=220&fit=crop',
+  'boston':       'https://images.unsplash.com/photo-1573524949339-b830334a31ee?w=500&h=220&fit=crop',
+  'houston':      'https://plus.unsplash.com/premium_photo-1694475111397-7d2170cf6e8d?w=500&h=220&fit=crop',
+  'cairo':        'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=500&h=220&fit=crop',
+  'cape town':    'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=500&h=220&fit=crop',
+  'mexico city':  'https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?w=500&h=220&fit=crop',
+  'buenos aires': 'https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=500&h=220&fit=crop',
+  'amsterdam':    'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=500&h=220&fit=crop',
+  'barcelona':    'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=500&h=220&fit=crop',
+  'ankara':       'https://images.unsplash.com/photo-1569288063643-5d29ad64df09?w=500&h=220&fit=crop',
+  'hong kong':    'https://images.unsplash.com/photo-1536599018102-9f803c4d1972?w=500&h=220&fit=crop',
+  'hongkong':     'https://images.unsplash.com/photo-1536599018102-9f803c4d1972?w=500&h=220&fit=crop',
+  'lucknow':      'https://images.unsplash.com/photo-1548013146-72479768bada?w=500&h=220&fit=crop',
+  'madrid':       'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=500&h=220&fit=crop',
+  'munich':       'https://images.unsplash.com/photo-1595867818082-083862f3d630?w=500&h=220&fit=crop',
+  'münchen':      'https://images.unsplash.com/photo-1595867818082-083862f3d630?w=500&h=220&fit=crop',
+  'seoul':        'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=500&h=220&fit=crop',
+  'shanghai':     'https://images.unsplash.com/photo-1537531383496-f4749b8032cf?w=500&h=220&fit=crop',
+  'taipei':       'https://images.unsplash.com/photo-1470004914212-05527e49370b?w=500&h=220&fit=crop',
+  'tel aviv':     'https://plus.unsplash.com/premium_photo-1733292027787-6463fb0f9925?w=500&h=220&fit=crop',
+  'warsaw':       'https://images.unsplash.com/photo-1519197924294-4ba991a11128?w=500&h=220&fit=crop',
+  'wellington':   'https://images.unsplash.com/photo-1589871973318-9ca1258faa5d?w=500&h=220&fit=crop',
+  'default':      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&h=220&fit=crop'
+};
+
+function getCityImage(marketTitle) {
+  if (!marketTitle) return CITY_IMAGES['default'];
+  const lower = marketTitle.toLowerCase();
+  for (const [city, url] of Object.entries(CITY_IMAGES)) {
+    if (city !== 'default' && lower.includes(city)) return url;
+  }
+  return CITY_IMAGES['default'];
+}
+
+let _prevActivityIds = new Set();
+let _toastEntries = [];       // trades currently shown in the panel
+let _toastTimer = null;       // auto-close timer
+const TOAST_DURATION = 60000; // 60 seconds
+
+// ─── Audio Notification via Web Audio API ────────────────────────
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx) {
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e) { console.warn('Web Audio not supported'); }
+  }
+  return _audioCtx;
+}
+
+function playNotifSound(type) {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  // Resume if suspended (browser autoplay policy)
+  if (ctx.state === 'suspended') ctx.resume();
+
+  const now = ctx.currentTime;
+
+  if (type === 'buy') {
+    // Bright, high-pitched double beep
+    [0, 0.12].forEach((delay) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, now + delay);
+      osc.frequency.exponentialRampToValueAtTime(1600, now + delay + 0.08);
+      gain.gain.setValueAtTime(0.18, now + delay);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.15);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + delay);
+      osc.stop(now + delay + 0.15);
+    });
+  } else if (type === 'sell') {
+    // Low, descending tone
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(500, now);
+    osc.frequency.exponentialRampToValueAtTime(280, now + 0.25);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.3);
+  } else if (type === 'redeem') {
+    // Deep, resonant chord — two low tones
+    [320, 400].forEach((freq, fi) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.4);
+    });
+  }
+}
+
+// ─── Aggregating Trade Notification Panel ────────────────────────
+function getTradeCategory(typeStr) {
+  const t = (typeStr || '').toUpperCase();
+  if (t.includes('REDEEM')) return 'redeem';
+  if (t.includes('SELL')) return 'sell';
+  return 'buy';
+}
+
+function buildTradeEntryHTML(trade) {
+  const w = trade._wallet;
+  const type = (trade.type || '').toUpperCase();
+  const category = getTradeCategory(type);
+  const outcome = (trade.outcome || '').toUpperCase();
+  const isYes = outcome === 'YES';
+  const price = parseFloat(trade.price) || 0;
+  const usdcSize = parseFloat(trade.usdcSize || trade.amount) || 0;
+  const marketTitle = trade.title || trade.market || '—';
+  const cityImg = getCityImage(marketTitle);
+  const timeStr = new Date().toLocaleTimeString('pt-BR');
+
+  let badgeClass, badgeText;
+  if (category === 'redeem') { badgeClass = 'redeem'; badgeText = 'REDEEM'; }
+  else if (category === 'sell') { badgeClass = 'sell'; badgeText = 'SELL'; }
+  else { badgeClass = 'buy'; badgeText = 'BUY'; }
+
+  // Outcome + Price display
+  let outcomeDisplay = '—';
+  if (outcome && price > 0) {
+    outcomeDisplay = `<span style="color:${isYes ? 'var(--green)' : 'var(--red)'}">${outcome}</span> <span style="color:var(--muted)">@</span> ${(price * 100).toFixed(1)}¢`;
+  } else if (outcome) {
+    outcomeDisplay = `<span style="color:${isYes ? 'var(--green)' : 'var(--red)'}">${outcome}</span>`;
+  } else if (price > 0) {
+    outcomeDisplay = `${(price * 100).toFixed(1)}¢`;
+  }
+
+  return `<div class="trade-toast-entry">
+    <div class="trade-toast-img">
+      <img src="${cityImg}" alt="" onerror="this.style.display='none'">
+      <div class="trade-toast-img-overlay">
+        <span class="trade-toast-badge ${badgeClass}">${badgeText}</span>
+        <span class="trade-toast-time">${timeStr}</span>
+      </div>
+    </div>
+    <div class="trade-toast-body">
+      <div class="trade-toast-market">${marketTitle}</div>
+      <div class="trade-toast-grid">
+        <div class="trade-toast-stat">
+          <div class="trade-toast-stat-label">Outcome</div>
+          <div class="trade-toast-stat-val">${outcomeDisplay}</div>
+        </div>
+        <div class="trade-toast-stat">
+          <div class="trade-toast-stat-label">Valor</div>
+          <div class="trade-toast-stat-val" style="color:var(--blue)">
+            ${usdcSize > 0 ? fmt$(usdcSize) : '—'}
+          </div>
+        </div>
+      </div>
+      <div class="trade-toast-wallet${_toastBlurred ? ' toast-wallet-blurred' : ''}">
+        <div class="trade-toast-wallet-dot" style="background:${w.color}"></div>
+        <span class="trade-toast-wallet-label">${w.label}</span>
+        <span class="trade-toast-wallet-addr" style="color:${w.color}">${w.short}</span>
+      </div>
+      ${usdcSize > 0 && price > 0 ? `<div class="trade-toast-amount">${Math.floor(usdcSize / price)} quotas · ${type}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function addTradeToPanel(trade) {
+  const overlay = document.getElementById('tradeToastOverlay');
+  const entries = document.getElementById('toastEntries');
+  const countEl = document.getElementById('toastCount');
+  if (!overlay || !entries) return;
+
+  // Add to entries list (newest on top)
+  _toastEntries.unshift(trade);
+  entries.insertAdjacentHTML('afterbegin', buildTradeEntryHTML(trade));
+  countEl.textContent = _toastEntries.length;
+
+  // Show panel if not visible
+  if (!overlay.classList.contains('visible')) {
+    overlay.className = 'trade-toast-overlay';
+    overlay.style.pointerEvents = '';
+    overlay.style.background = '';
+    overlay.style.display = 'flex';
+    requestAnimationFrame(() => overlay.classList.add('visible'));
+  }
+
+  // Play sound — only ONE sound per batch call (handled in checkForNewTrades)
+  // Sound is played from checkForNewTrades, not here
+
+  // Reset auto-close timer on each new trade — panel disappears 60s after last trade
+  if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
+  _toastTimer = setTimeout(() => closeTradePanel(), TOAST_DURATION);
+}
+
+function closeTradePanel() {
+  const overlay = document.getElementById('tradeToastOverlay');
+  const entries = document.getElementById('toastEntries');
+  const countEl = document.getElementById('toastCount');
+  if (!overlay) return;
+
+  // Clear timer first
+  if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
+
+  overlay.classList.remove('visible');
+  overlay.classList.add('exit');
+
+  setTimeout(() => {
+    overlay.classList.remove('exit');
+    overlay.className = 'trade-toast-overlay';
+    overlay.style.pointerEvents = 'none';
+    overlay.style.background = 'rgba(0,0,0,0)';
+    overlay.style.display = 'none';
+    if (entries) entries.innerHTML = '';
+    if (countEl) countEl.textContent = '0';
+    _toastEntries = [];
+  }, 400);
+}
+
+// Toggle blur on wallet addresses in toast notifications
+let _toastBlurred = false;
+function toggleToastBlur() {
+  _toastBlurred = !_toastBlurred;
+  const entriesContainer = document.getElementById('toastEntries');
+  const btn = document.getElementById('toastBlurBtn');
+  if (entriesContainer) {
+    // Apply/remove blur class on all wallet rows
+    entriesContainer.querySelectorAll('.trade-toast-wallet').forEach(el => {
+      el.classList.toggle('toast-wallet-blurred', _toastBlurred);
+    });
+  }
+  if (btn) {
+    btn.textContent = _toastBlurred ? '◎ SHOW' : '◉ HIDE';
+    btn.classList.toggle('active', _toastBlurred);
+  }
+}
+
+// Check for new trades after each data load
+function checkForNewTrades() {
+  const currentIds = new Set();
+  const newTrades = [];
+
+  walletData.forEach((d, i) => {
+    if (!d) return;
+    const activity = Array.isArray(d.activity) ? d.activity : [];
+    activity.forEach(a => {
+      const id = `${i}_${a.timestamp || a.createdAt}_${a.type}_${(a.title||a.market||'').slice(0,30)}`;
+      currentIds.add(id);
+      if (_prevActivityIds.size > 0 && !_prevActivityIds.has(id)) {
+        newTrades.push({ ...a, _wallet: WALLETS[i] });
+      }
+    });
+  });
+
+  // Add new trades to the panel (max 5 to avoid flooding)
+  if (_prevActivityIds.size > 0 && newTrades.length > 0) {
+    const toShow = newTrades.slice(0, 5);
+
+    // Determine the dominant sound: pick the "most important" category
+    // Priority: redeem > sell > buy
+    let soundType = 'buy';
+    for (const t of toShow) {
+      const cat = getTradeCategory(t.type);
+      if (cat === 'redeem') { soundType = 'redeem'; break; }
+      if (cat === 'sell') soundType = 'sell';
+    }
+
+    // Play ONE aggregated sound
+    playNotifSound(soundType);
+
+    // Add all to the panel
+    toShow.forEach(t => addTradeToPanel(t));
+  }
+
+  _prevActivityIds = currentIds;
+}
+
+// Boot
+buildPanels();
+loadAll().then(() => {
+  _prevDataHash = hashWalletData();
+});
+
+// ─── Silent background refresh (no loading states, no panel rebuild) ──
+let _silentRefreshRunning = false;
+let _prevDataHash = '';
+
+function hashWalletData() {
+  // Quick hash to detect if anything actually changed
+  try {
+    return walletData.map((d, i) => {
+      if (!d) return 'null';
+      const actLen = Array.isArray(d.activity) ? d.activity.length : 0;
+      const posLen = Array.isArray(d.positions) ? d.positions.length : 0;
+      const posVal = (Array.isArray(d.positions) ? d.positions : []).reduce((s,p) => s + (parseFloat(p.currentValue)||0), 0).toFixed(2);
+      const firstAct = Array.isArray(d.activity) && d.activity[0] ? (d.activity[0].timestamp || d.activity[0].createdAt || '') : '';
+      return `${i}:${actLen}:${posLen}:${posVal}:${firstAct}`;
+    }).join('|');
+  } catch(e) { return Math.random().toString(); }
+}
+
+async function silentRefresh() {
+  if (_silentRefreshRunning) return;
+  _silentRefreshRunning = true;
+  console.log('[Silent refresh] fetching…');
+
+  try {
+    // Fetch all wallet data in background — this only updates walletData[], touches NO DOM
+    const promises = WALLETS.map((w, i) =>
+      loadWallet(i).catch(e => {
+        console.warn('Silent refresh error wallet', i, e.message);
+      })
+    );
+    await Promise.all(promises);
+
+    // Check for new trades → show toast (this only reads walletData, no DOM changes)
+    checkForNewTrades();
+
+    // Only re-render if data actually changed
+    const newHash = hashWalletData();
+    if (newHash !== _prevDataHash) {
+      console.log('[Silent refresh] data changed, updating UI…');
+      _prevDataHash = newHash;
+
+      // Re-render only the currently active panel — no buildPanels, no loading spinners
+      const tab = currentTab;
+      if (typeof tab === 'number') renderWallet(tab);
+      if (tab === 'live') renderLive();
+      if (tab === 'overview') renderOverview();
+      if (tab === 'combined') renderCombined();
+
+      // Update timestamp
+      document.getElementById('lastUpdate').textContent =
+        'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+    } else {
+      console.log('[Silent refresh] no changes detected');
+    }
+  } catch (e) {
+    console.warn('[Silent refresh] error:', e.message);
+  }
+
+  _silentRefreshRunning = false;
+}
+
+// Auto-refresh every 60s in background to detect new trades
+setInterval(silentRefresh, 60000);
+
+// ─── PWA Service Worker Registration ────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

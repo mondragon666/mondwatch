@@ -1,0 +1,24 @@
+{
+  "name": "Mondwatch · Portfolio Dashboard",
+  "short_name": "Mondwatch",
+  "description": "Multi-Wallet Polymarket Portfolio Monitor",
+  "start_url": "./dashboard.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050508",
+  "theme_color": "#050508",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23050508'/%3E%3Cpolygon points='256,70 440,155 440,345 256,430 72,345 72,155' fill='%2300e5a0' opacity='0.15' stroke='%2300e5a0' stroke-width='6'/%3E%3Cpolygon points='256,110 400,175 400,335 256,400 112,335 112,175' fill='%2300e5a0' opacity='0.08'/%3E%3Ctext x='256' y='305' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='160' fill='%2300e5a0'%3EM%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%23050508'/%3E%3Cpolygon points='96,26 168,60 168,132 96,166 24,132 24,60' fill='%2300e5a0' opacity='0.15' stroke='%2300e5a0' stroke-width='3'/%3E%3Ctext x='96' y='115' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='60' fill='%2300e5a0'%3EM%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
