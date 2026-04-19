@@ -2,27 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mondwatch · Portfolio Dashboard</title>
-
-<!-- PWA / iOS Web App -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mondwatch">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#050508">
-<meta name="format-detection" content="telephone=no">
-<link rel="manifest" href="manifest.json">
-
-<!-- iOS Splash Screens (generated inline as SVG data URIs) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23050508'/%3E%3Cpolygon points='90,25 155,55 155,125 90,155 25,125 25,55' fill='%2300e5a0' opacity='0.15' stroke='%2300e5a0' stroke-width='3'/%3E%3Cpolygon points='90,40 140,63 140,117 90,140 40,117 40,63' fill='%2300e5a0' opacity='0.08'/%3E%3Ctext x='90' y='108' text-anchor='middle' font-family='sans-serif' font-weight='700' font-size='55' fill='%2300e5a0'%3EM%3C/text%3E%3C/svg%3E">
-
-<!-- iOS Splash Screen -->
-<style id="splash-style">
-  @media screen and (display-mode: standalone) {
-    html { background: #050508; }
-  }
-</style>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
 
@@ -42,14 +23,16 @@
   --w1:       #00e5a0;
   --w2:       #4d9fff;
   --w3:       #a855f7;
-  --w4: #ec4899; /* Rosa Vibrante (Pink) */
-  --w5: #f97316; /* Laranja Energético (Orange) */
-  --w6: #06b6d4; /* Cyan/Turquesa - Equilíbrio entre o Green e o Blue */
-  --w7: #84cc16; /* Lime/Limão - Transição vibrante entre Yellow e Green */
-  --w8: #f1f5f9; /* Off-White/Cloud - Para contraste máximo em elementos críticos */
+  --w4:		  #ec4899; /* Rosa Vibrante (Pink) */
+  --w5:       #f97316; /* Laranja Energético (Orange) */
+  --w6:       #06b6d4; /* Cyan/Turquesa - Equilíbrio entre o Green e o Blue */
+  --w7:       #84cc16; /* Lime/Limão - Transição vibrante entre Yellow e Green */
+  --w8:       #8b5cf6; /* Off-White/Cloud - Para contraste máximo em elementos críticos */
+  --w9:       #facc15;
+  --w10:      #fb7185;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
 
@@ -59,14 +42,7 @@ body {
   font-family: 'Rajdhani', sans-serif;
   font-size: 15px;
   min-height: 100vh;
-  min-height: -webkit-fill-available;
   overflow-x: hidden;
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
 }
 
 /* SCANLINE BG */
@@ -88,8 +64,7 @@ body::before {
 /* HEADER */
 header {
   padding: 0 32px;
-  padding-top: env(safe-area-inset-top);
-  height: calc(64px + env(safe-area-inset-top));
+  height: 64px;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -99,7 +74,6 @@ header {
   top: 0;
   z-index: 100;
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 .logo-mark {
@@ -768,23 +742,25 @@ tbody tr:last-child td { border-bottom: none; }
 /* Close button */
 .trade-toast-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.15);
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.2);
   color: #fff;
-  font-size: 16px;
-  width: 30px;
-  height: 30px;
+  font-size: 18px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s;
-  z-index: 20;
+  z-index: 100;
   line-height: 1;
   backdrop-filter: blur(6px);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .trade-toast-close:hover {
   background: rgba(255,60,90,0.4);
@@ -1509,111 +1485,14 @@ tbody tr:last-child td { border-bottom: none; }
 @media (max-width: 700px) {
   .live-summary-grid { grid-template-columns: repeat(2, 1fr); }
 }
-
-/* ═══ PWA / iPhone Mobile Optimizations ═══ */
-@media (max-width: 480px) {
-  header {
-    padding: 0 12px;
-    padding-top: env(safe-area-inset-top);
-    gap: 8px;
-  }
-  .logo-text { font-size: 16px; letter-spacing: 1px; }
-  .logo-hex { width: 26px; height: 26px; font-size: 12px; }
-  header > div:nth-child(2) { display: none; } /* hide subtitle on mobile */
-
-  .wallet-tabs {
-    padding: 8px 8px 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 0;
-  }
-  .wallet-tabs::-webkit-scrollbar { display: none; }
-  .wtab {
-    padding: 10px 12px;
-    font-size: 11px;
-    letter-spacing: 1px;
-    min-width: max-content;
-  }
-  .wtab .edit-label { display: none; }
-
-  .content { padding: 14px 10px; }
-
-  .kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-  .kpi { padding: 12px 14px; }
-  .kpi-val { font-size: 20px; }
-
-  .two-col { grid-template-columns: 1fr; gap: 12px; }
-
-  .portfolio-summary-row { grid-template-columns: 1fr; gap: 10px; }
-  .pm-card { padding: 16px; }
-  .pm-card-value { font-size: 38px; }
-  .pm-available-val { font-size: 24px; }
-  .pm-card-refresh {
-    position: relative;
-    bottom: auto; right: auto;
-    width: 100%;
-    justify-content: center;
-    margin-top: 14px;
-    padding: 12px 20px;
-  }
-
-  .overview-wallet-row { grid-template-columns: 1fr; }
-  .ov-pnl-row { grid-template-columns: 1fr; }
-  .ov-total { font-size: 24px; }
-
-  .trader-stats-banner {
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 12px;
-  }
-  .ts-sep { display: none; }
-  .ts-item { flex: 0 0 calc(50% - 4px); min-width: 0; }
-  .ts-val { font-size: 14px; }
-
-  table { font-size: 12px; }
-  th, td { padding: 8px 10px; }
-  .market-name { max-width: 200px; font-size: 12px; }
-
-  .onchain-grid { grid-template-columns: 1fr 1fr; }
-  .onchain-cell-primary { grid-column: span 2; }
-  .onchain-cell { padding: 12px 14px; }
-  .onchain-cell-value { font-size: 18px; }
-
-  .live-summary-grid { grid-template-columns: 1fr 1fr; }
-  .live-summary-cell { padding: 14px 12px; }
-  .live-summary-val { font-size: 18px; }
-
-  .trade-toast { width: min(380px, 95vw); }
-  .trade-toast-img { height: 90px; }
-  .trade-toast-market { font-size: 14px; }
-  .trade-toast-stat-val { font-size: 16px; }
-}
-
-/* Standalone mode (added to home screen) */
-@media (display-mode: standalone) {
-  body { padding-top: env(safe-area-inset-top); }
-  header {
-    padding-top: calc(env(safe-area-inset-top) + 4px);
-    height: calc(64px + env(safe-area-inset-top) + 4px);
-  }
-}
-
-/* Pull-to-refresh prevention in standalone */
-@supports (-webkit-touch-callout: none) {
-  body { overscroll-behavior-y: contain; }
-}
 </style>
 </head>
 <body>
 
 <!-- Trade notification toast overlay (centered, with photos, aggregating) -->
-<div class="trade-toast-overlay" id="tradeToastOverlay" style="display:none;">
+<div class="trade-toast-overlay" id="tradeToastOverlay" style="display:none;" onclick="if(event.target===this)closeTradePanel()">
   <div class="trade-toast" id="tradeToast">
-    <button class="trade-toast-close" id="toastCloseBtn" onclick="closeTradePanel()" title="Fechar">✕</button>
+    <button class="trade-toast-close" id="toastCloseBtn" onmousedown="closeTradePanel()" onclick="closeTradePanel()" title="Fechar">✕</button>
     <div class="trade-toast-panel-header">
       <span class="onchain-live-dot" style="width:5px;height:5px"></span>
       <span class="trade-toast-panel-title">TRADES DETECTADOS</span>
@@ -1637,6 +1516,7 @@ tbody tr:last-child td { border-bottom: none; }
     MULTI-WALLET MONITOR · POLYMARKET
   </div>
   <div class="header-right">
+    <button class="refresh-btn" onclick="configPastWallets()">⚙️ PAST WALLETS</button>
     <span class="last-update" id="lastUpdate">—</span>
   </div>
 </header>
@@ -1686,6 +1566,11 @@ tbody tr:last-child td { border-bottom: none; }
     <span class="wlabel" id="wlabel-7">W8</span>
     <span class="edit-label" onclick="event.stopPropagation();renameWallet(7)" title="Renomear">✎</span>
   </div>
+    <div class="wtab loading" style="--wc:var(--w9)" data-wallet="8" onclick="showWallet(8)">
+    <span class="dot"></span>
+    <span class="wlabel" id="wlabel-8">W9</span>
+    <span class="edit-label" onclick="event.stopPropagation();renameWallet(8)" title="Renomear">✎</span>
+  </div>
   <div class="wtab" style="--wc:#ffcc00; position:relative;" data-wallet="overview" onclick="showWallet('overview')">
     <span class="dot" style="background:var(--yellow)"></span>
     <span>OVERVIEW</span>
@@ -1711,6 +1596,7 @@ const WALLETS = [
   { addr: '0x8E2Ccc6ddA58375a8633556163cE732aE8C5018b', color: 'var(--w6)', label: 'W6', short: '0x8E2C...018b' },
   { addr: '0x960e5B2c2B8B0D5c7354318F25A04fE02513B0B7', color: 'var(--w7)', label: 'W7', short: '0x960e...B0B7' },
   { addr: '0x122DCFe61283AcD148714bBC3f5eF64af4A2C5c7', color: 'var(--w8)', label: 'W8', short: '0x122D...C5c7' },
+  { addr: '0x3bab2a53A9bBD31bf0610B2e0E9e796532C4ECEb', color: 'var(--w9)', label: 'W9', short: '0x3BAB...ECEb' },
 ];
 
 // Load saved custom labels from localStorage
@@ -1745,6 +1631,35 @@ const ETHERSCAN_KEY    = 'DX88BA4M5RVVWEF55VXQMF96GMCWFXKDEW';
 
 let walletData = [null, null, null, null, null];
 let currentTab = 'live';
+
+let pastWallets = [];
+try { pastWallets = JSON.parse(localStorage.getItem('polywatch_past_wallets') || '[]'); } catch(e){}
+let pastWalletsVolume = 0;
+
+async function loadPastWalletsVolume() {
+  if (!pastWallets.length) { pastWalletsVolume = 0; return; }
+  let vol = 0;
+  const promises = pastWallets.map(addr =>
+    apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=PNL&limit=1&offset=0&category=overall&user=${addr.trim()}`)
+      .then(res => {
+         if (Array.isArray(res) && res[0]) vol += parseFloat(res[0].vol || 0);
+      })
+      .catch(e => console.warn("Error fetching past wallet vol:", e))
+  );
+  await Promise.all(promises);
+  pastWalletsVolume = vol;
+}
+
+function configPastWallets() {
+  const current = pastWallets.join(', ');
+  const novo = prompt('Insira os endereços das wallets inativas para somar apenas o volume all-time (separados por vírgula):', current);
+  if (novo === null) return;
+  const arr = novo.split(',').map(s => s.trim()).filter(s => s.length > 5);
+  pastWallets = arr;
+  localStorage.setItem('polywatch_past_wallets', JSON.stringify(arr));
+  if (arr.length > 0) alert(`Salvo! ${arr.length} inativas configuradas.`);
+  loadAll();
+}
 
 // ─── Fetch helpers ────────────────────────────────────────────────
 async function apiFetch(url) {
@@ -2662,7 +2577,7 @@ function renderLive() {
   const grandCash = infos.reduce((s, info) => s + (info?.cash || 0), 0);
   const grandPos = infos.reduce((s, info) => s + (info?.posVal || 0), 0);
   const grandPnl = infos.reduce((s, info) => s + (info?.pnl || 0), 0);
-  const grandVol = infos.reduce((s, info) => s + (info?.vol || 0), 0);
+  const grandVol = infos.reduce((s, info) => s + (info?.vol || 0), 0) + pastWalletsVolume;
   const totalOpenPos = infos.reduce((s, info) => s + (info?.posCount || 0), 0);
 
   let html = `<div class="fade-in">`;
@@ -2703,7 +2618,7 @@ function renderLive() {
       <div class="live-summary-cell">
         <div class="live-summary-label">Volume Total</div>
         <div class="live-summary-val">${fmt$(grandVol)}</div>
-        <div class="live-summary-sub">all-time</div>
+        <div class="live-summary-sub">all-time${pastWallets.length > 0 ? ' + '+pastWallets.length+' inativas' : ''}</div>
       </div>
     </div>
 
@@ -2854,6 +2769,7 @@ function renderCombined() {
   const unrealized   = allPositions.reduce((s,p) => s + (parseFloat(p.cashPnl)||0), 0);
   const realized     = allClosed.reduce((s,p) => s + (parseFloat(p.realizedPnl)||0), 0);
   const invested     = allPositions.reduce((s,p) => s + (parseFloat(p.totalBought)||0), 0);
+  const totalVol     = walletData.reduce((s, d) => s + (parseFloat(Array.isArray(d?.leaderboard)?d.leaderboard[0]?.vol:0)||0), 0) + pastWalletsVolume;
 
   let html = `<div class="fade-in">`;
 
@@ -2895,6 +2811,11 @@ function renderCombined() {
       <div class="kpi-label">Investido Total</div>
       <div class="kpi-val neutral">${fmt$(invested)}</div>
       <div class="kpi-sub">abertas somadas</div>
+    </div>
+    <div class="kpi" style="--kc:var(--purple)">
+      <div class="kpi-label">Volume Total</div>
+      <div class="kpi-val neutral">${fmt$(totalVol)}</div>
+      <div class="kpi-sub">all-time${pastWallets.length > 0 ? ' + inativas' : ''}</div>
     </div>
     <div class="kpi" style="--kc:var(--yellow)">
       <div class="kpi-label">Melhor Posição</div>`;
@@ -3009,6 +2930,8 @@ async function loadAll() {
       console.error('Error loading wallet', i, e);
     })
   );
+
+  promises.push(loadPastWalletsVolume());
 
   await Promise.all(promises);
   renderCombined();
@@ -3207,6 +3130,7 @@ function getCityImage(marketTitle) {
 let _prevActivityIds = new Set();
 let _toastEntries = [];       // trades currently shown in the panel
 let _toastTimer = null;       // auto-close timer
+let _toastClosing = false;    // prevent reopen during exit animation
 const TOAST_DURATION = 60000; // 60 seconds
 
 // ─── Audio Notification via Web Audio API ────────────────────────
@@ -3337,6 +3261,8 @@ function buildTradeEntryHTML(trade) {
 }
 
 function addTradeToPanel(trade) {
+  if (_toastClosing) return; // Don't reopen during exit animation
+
   const overlay = document.getElementById('tradeToastOverlay');
   const entries = document.getElementById('toastEntries');
   const countEl = document.getElementById('toastCount');
@@ -3350,9 +3276,7 @@ function addTradeToPanel(trade) {
   // Show panel if not visible
   if (!overlay.classList.contains('visible')) {
     overlay.className = 'trade-toast-overlay';
-    overlay.style.pointerEvents = '';
-    overlay.style.background = '';
-    overlay.style.display = 'flex';
+    overlay.style.cssText = 'display:flex;';
     requestAnimationFrame(() => overlay.classList.add('visible'));
   }
 
@@ -3370,21 +3294,25 @@ function closeTradePanel() {
   const countEl = document.getElementById('toastCount');
   if (!overlay) return;
 
-  // Clear timer first
+  // Clear timer
   if (_toastTimer) { clearTimeout(_toastTimer); _toastTimer = null; }
 
+  // Block re-opens during exit
+  _toastClosing = true;
+
+  // Start exit animation
   overlay.classList.remove('visible');
   overlay.classList.add('exit');
 
+  // After animation, fully reset everything
   setTimeout(() => {
     overlay.classList.remove('exit');
     overlay.className = 'trade-toast-overlay';
-    overlay.style.pointerEvents = 'none';
-    overlay.style.background = 'rgba(0,0,0,0)';
-    overlay.style.display = 'none';
+    overlay.style.cssText = 'display:none;';
     if (entries) entries.innerHTML = '';
     if (countEl) countEl.textContent = '0';
     _toastEntries = [];
+    _toastClosing = false; // Allow new toasts again
   }, 400);
 }
 
@@ -3476,6 +3404,13 @@ async function silentRefresh() {
   console.log('[Silent refresh] fetching…');
 
   try {
+    // Safety: force-close toast overlay if it's been stuck visible without timer
+    const overlay = document.getElementById('tradeToastOverlay');
+    if (overlay && overlay.classList.contains('visible') && !_toastTimer && !_toastClosing) {
+      console.log('[Silent refresh] stale toast detected, force closing');
+      closeTradePanel();
+    }
+
     // Fetch all wallet data in background — this only updates walletData[], touches NO DOM
     const promises = WALLETS.map((w, i) =>
       loadWallet(i).catch(e => {
@@ -3487,25 +3422,20 @@ async function silentRefresh() {
     // Check for new trades → show toast (this only reads walletData, no DOM changes)
     checkForNewTrades();
 
-    // Only re-render if data actually changed
-    const newHash = hashWalletData();
-    if (newHash !== _prevDataHash) {
-      console.log('[Silent refresh] data changed, updating UI…');
-      _prevDataHash = newHash;
+    // Always re-render the active panel — true hard refresh, transparent to user
+    const tab = currentTab;
+    if (typeof tab === 'number') renderWallet(tab);
+    if (tab === 'live') renderLive();
+    if (tab === 'overview') renderOverview();
+    if (tab === 'combined') renderCombined();
 
-      // Re-render only the currently active panel — no buildPanels, no loading spinners
-      const tab = currentTab;
-      if (typeof tab === 'number') renderWallet(tab);
-      if (tab === 'live') renderLive();
-      if (tab === 'overview') renderOverview();
-      if (tab === 'combined') renderCombined();
+    _prevDataHash = hashWalletData();
 
-      // Update timestamp
-      document.getElementById('lastUpdate').textContent =
-        'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
-    } else {
-      console.log('[Silent refresh] no changes detected');
-    }
+    // Update timestamp
+    document.getElementById('lastUpdate').textContent =
+      'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+
+    console.log('[Silent refresh] UI updated');
   } catch (e) {
     console.warn('[Silent refresh] error:', e.message);
   }
@@ -3515,11 +3445,6 @@ async function silentRefresh() {
 
 // Auto-refresh every 60s in background to detect new trades
 setInterval(silentRefresh, 60000);
-
-// ─── PWA Service Worker Registration ────────────────────────────
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
 </script>
 </body>
 </html>
