@@ -23,7 +23,7 @@
   --w1:       #00e5a0;
   --w2:       #4d9fff;
   --w3:       #a855f7;
-  --w4:		  #ec4899; /* Rosa Vibrante (Pink) */
+  --w4:		    #ec4899; /* Rosa Vibrante (Pink) */
   --w5:       #f97316; /* Laranja Energético (Orange) */
   --w6:       #06b6d4; /* Cyan/Turquesa - Equilíbrio entre o Green e o Blue */
   --w7:       #84cc16; /* Lime/Limão - Transição vibrante entre Yellow e Green */
@@ -1624,8 +1624,8 @@ function renameWallet(idx) {
 const DATA_API = 'https://data-api.polymarket.com';
 const GAMMA_API = 'https://gamma-api.polymarket.com';
 
-// USDC contract on Polygon (6 decimals)
-const USDC_CONTRACT_POLYGON = '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174';
+// PUSD contract on Polygon (6 decimals)
+const PUSD_CONTRACT_POLYGON = '0xC011a7E16b3252a1C41775796E783B09342E82DFB';
 const ETHERSCAN_V2_API = 'https://api.etherscan.io/v2/api';
 const ETHERSCAN_KEY    = 'DX88BA4M5RVVWEF55VXQMF96GMCWFXKDEW';
 
@@ -1673,19 +1673,19 @@ async function apiFetch(url) {
   }
 }
 
-// Fetch USDC balance on Polygon via Etherscan v2 API (chainid=137)
+// Fetch PUSD balance on Polygon via Etherscan v2 API (chainid=137)
 // With retry logic and staggered delays to avoid rate limits
-async function fetchUsdcBalance(addr, retries = 3, delayMs = 0) {
+async function fetchPusdBalance(addr, retries = 3, delayMs = 0) {
   if (delayMs > 0) await new Promise(r => setTimeout(r, delayMs));
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const url = `${ETHERSCAN_V2_API}?chainid=137&module=account&action=tokenbalance` +
-                  `&contractaddress=${USDC_CONTRACT_POLYGON}&address=${addr}&tag=latest&apikey=${ETHERSCAN_KEY}`;
+                  `&contractaddress=${PUSD_CONTRACT_POLYGON}&address=${addr}&tag=latest&apikey=${ETHERSCAN_KEY}`;
       const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const data = await r.json();
-      console.log(`Etherscan USDC [attempt ${attempt}] for ${addr.slice(0,8)}:`, JSON.stringify(data));
+      console.log(`Etherscan PUSD [attempt ${attempt}] for ${addr.slice(0,8)}:`, JSON.stringify(data));
 
       if (data.status === '0' && data.result && data.result.toLowerCase().includes('rate limit')) {
         console.warn(`Etherscan rate limited [attempt ${attempt}], retrying in ${attempt * 1500}ms...`);
@@ -1727,11 +1727,11 @@ async function loadWallet(idx) {
   ]);
 
   // Fetch trades and leaderboard in parallel
-  // USDC balance is fetched with staggered delay (idx * 400ms) to avoid Etherscan rate limit
-  const [trades, leaderboard, usdcBalance] = await Promise.all([
+  // PUSD balance is fetched with staggered delay (idx * 400ms) to avoid Etherscan rate limit
+  const [trades, leaderboard, pusdBalance] = await Promise.all([
     apiFetch(`${DATA_API}/trades?user=${addr}&limit=500`),
     apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=PNL&limit=1&offset=0&category=overall&user=${addr}`),
-    fetchUsdcBalance(addr, 3, idx * 400)
+    fetchPusdBalance(addr, 3, idx * 400)
   ]);
 
   // Fetch PnL time-series for all 4 periods in parallel
@@ -1745,7 +1745,7 @@ async function loadWallet(idx) {
   const pnlSeries = { '1D': pnl1d, '1W': pnl1w, '1M': pnl1m, 'ALL': pnlAll };
   console.log(`W${idx+1} pnlSeries ALL sample:`, JSON.stringify(pnlAll?.slice(0,2)));
 
-  walletData[idx] = { positions, closed, activity, value, trades, usdcBalance, leaderboard, pnlSeries };
+  walletData[idx] = { positions, closed, activity, value, trades, pusdBalance, leaderboard, pnlSeries };
   return walletData[idx];
 }
 
@@ -1822,24 +1822,24 @@ function renderWallet(idx) {
     ? Math.max(...closed.map(p => parseFloat(p.realizedPnl)||0))
     : 0;
 
-  // Value: positions + USDC cash = total wallet
+  // Value: positions + PUSD cash = total wallet
   const positionsValue = positions.reduce((s, p) => s + (parseFloat(p.currentValue)||0), 0);
 
-  // Priority: 1) on-chain USDC from Polygon, 2) API cash fields, 3) fallback to /value aggregate
-  const onChainUsdc = typeof d.usdcBalance === 'number' ? d.usdcBalance : 0;
+  // Priority: 1) on-chain PUSD from Polygon, 2) API cash fields, 3) fallback to /value aggregate
+  const onChainPusd = typeof d.pusdBalance === 'number' ? d.pusdBalance : 0;
   const apiCashBalance = d.value
     ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance)
        || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0)
     : 0;
-  // Use on-chain USDC if available (>= 0.01), otherwise fall back to API
-  const cashBalance = onChainUsdc >= 0.01 ? onChainUsdc : apiCashBalance;
+  // Use on-chain PUSD if available (>= 0.01), otherwise fall back to API
+  const cashBalance = onChainPusd >= 0.01 ? onChainPusd : apiCashBalance;
   let totalValue = positionsValue + cashBalance;
   // Fallback: if no cash found at all and /value API returned a bigger aggregate figure, prefer it
   if (cashBalance < 0.01 && d.value && d.value.value) {
     const apiVal = parseFloat(d.value.value) || 0;
     if (apiVal > positionsValue) totalValue = apiVal;
   }
-  const cashSource = onChainUsdc >= 0.01 ? 'on-chain' : (apiCashBalance > 0 ? 'api' : 'none');
+  const cashSource = onChainPusd >= 0.01 ? 'on-chain' : (apiCashBalance > 0 ? 'api' : 'none');
 
   const totalCashPnl     = positions.reduce((s,p) => s + (parseFloat(p.cashPnl)||0), 0);
   // Profit/Loss: prefer leaderboard all-time PnL (set after lbData parsed below)
@@ -2283,7 +2283,7 @@ function renderOverview() {
 
   function walletTotal(d) {
     const posVal = (Array.isArray(d?.positions) ? d.positions : []).reduce((a,p) => a+(parseFloat(p.currentValue)||0), 0);
-    const onChain = typeof d?.usdcBalance === 'number' ? d.usdcBalance : 0;
+    const onChain = typeof d?.pusdBalance === 'number' ? d.pusdBalance : 0;
     const apiCash = d?.value ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance) || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0) : 0;
     const cash = onChain >= 0.01 ? onChain : apiCash;
     let total = posVal + cash;
@@ -2519,7 +2519,7 @@ function drawOvChart(idx, period) {
     pnlEl.className='pnl-card-value '+(isP?'pos-green':'pos-red');
   }
   if (lblEl) {
-    const labels={'1D':'Past Day','1W':'Past Week','1M':'Past Month','ALL':'All-Time'};
+    const labels={'1D':'Past Day','1W':'Past Week','1M':'Past Month','ALL':'ALL'};
     lblEl.textContent='Profit / Loss · '+(labels[period]||period);
   }
 }
@@ -2550,7 +2550,7 @@ function renderLive() {
       return true;
     });
     const posVal = positions.reduce((a,p) => a+(parseFloat(p.currentValue)||0), 0);
-    const onChain = typeof d?.usdcBalance === 'number' ? d.usdcBalance : 0;
+    const onChain = typeof d?.pusdBalance === 'number' ? d.pusdBalance : 0;
     const apiCash = d?.value ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance) || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0) : 0;
     const cash = onChain >= 0.01 ? onChain : apiCash;
     const cashSrc = onChain >= 0.01 ? 'on-chain' : (apiCash > 0 ? 'api' : 'none');
@@ -2755,7 +2755,7 @@ function renderCombined() {
 
   function walletTotal(d) {
     const posVal = (Array.isArray(d?.positions) ? d.positions : []).reduce((a,p) => a+(parseFloat(p.currentValue)||0), 0);
-    const onChain = typeof d?.usdcBalance === 'number' ? d.usdcBalance : 0;
+    const onChain = typeof d?.pusdBalance === 'number' ? d.pusdBalance : 0;
     const apiCash = d?.value ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance) || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0) : 0;
     const cash = onChain >= 0.01 ? onChain : apiCash;
     let total = posVal + cash;
@@ -2946,22 +2946,22 @@ async function loadAll() {
   // Check for new trades and show toast notifications
   checkForNewTrades();
 
-  // ─── USDC retry pass ───────────────────────────────────────────
+  // ─── PUSD retry pass ───────────────────────────────────────────
   const retryIndices = [];
   walletData.forEach((d, i) => {
-    if (d && (typeof d.usdcBalance !== 'number' || d.usdcBalance < 0.01)) {
+    if (d && (typeof d.pusdBalance !== 'number' || d.pusdBalance < 0.01)) {
       retryIndices.push(i);
     }
   });
 
   if (retryIndices.length > 0) {
-    console.log('USDC retry pass for wallets:', retryIndices.map(i => `W${i+1}`).join(', '));
+    console.log('PUSD retry pass for wallets:', retryIndices.map(i => `W${i+1}`).join(', '));
     for (const i of retryIndices) {
       await new Promise(r => setTimeout(r, 500));
-      const bal = await fetchUsdcBalance(WALLETS[i].addr, 2, 0);
+      const bal = await fetchPusdBalance(WALLETS[i].addr, 2, 0);
       if (bal >= 0.01 && walletData[i]) {
-        console.log(`USDC retry success for W${i+1}: $${bal.toFixed(2)}`);
-        walletData[i].usdcBalance = bal;
+        console.log(`PUSD retry success for W${i+1}: $${bal.toFixed(2)}`);
+        walletData[i].pusdBalance = bal;
         renderWallet(i);
       }
     }
