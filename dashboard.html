@@ -1671,7 +1671,9 @@ function configPastWallets() {
 // ─── Fetch helpers ────────────────────────────────────────────────
 async function apiFetch(url) {
   try {
-    const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const sep = url.includes('?') ? '&' : '?';
+    const finalUrl = url + sep + '_t=' + Date.now();
+    const r = await fetch(finalUrl, { headers: { 'Accept': 'application/json' }, cache: 'no-store' });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     return await r.json();
   } catch(e) {
@@ -1735,11 +1737,12 @@ async function loadWallet(idx) {
 
   // Fetch trades and leaderboard in parallel
   // PUSD balance is fetched with staggered delay (idx * 400ms) to avoid Etherscan rate limit
-  const [trades, leaderboard, pusdBalance] = await Promise.all([
-    apiFetch(`${DATA_API}/trades?user=${addr}&limit=500`),
-    apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=PNL&limit=1&offset=0&category=overall&user=${addr}`),
-    fetchPusdBalance(addr, 3, idx * 400)
-  ]);
+  const [trades, leaderboard, leaderboardVol, pusdBalance] = await Promise.all([
+  apiFetch(`${DATA_API}/trades?user=${addr}&limit=500`),
+  apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=PNL&limit=1&offset=0&category=overall&user=${addr}`),
+  apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=vol&limit=1&offset=0&user=${addr}`),
+  fetchPusdBalance(addr, 3, idx * 400)
+]);
 
   // Fetch PnL time-series for all 4 periods in parallel
   const PNL_API = 'https://user-pnl-api.polymarket.com/user-pnl';
@@ -1752,7 +1755,8 @@ async function loadWallet(idx) {
   const pnlSeries = { '1D': pnl1d, '1W': pnl1w, '1M': pnl1m, 'ALL': pnlAll };
   console.log(`W${idx+1} pnlSeries ALL sample:`, JSON.stringify(pnlAll?.slice(0,2)));
 
-  walletData[idx] = { positions, closed, activity, value, trades, pusdBalance, leaderboard, pnlSeries };
+  walletData[idx] = { positions, closed, activity, value, trades, pusdBalance, leaderboard, leaderboardVol, pnlSeries };
+
   return walletData[idx];
 }
 
@@ -1815,9 +1819,11 @@ function renderWallet(idx) {
   // Leaderboard data — fields: vol, pnl, rank, userName
   // { rank, proxyWallet, userName, vol, pnl, profileImage, ... }
   const lbData      = Array.isArray(d.leaderboard) ? d.leaderboard[0] : null;
+  const lbVolData   = Array.isArray(d.leaderboardVol) ? d.leaderboardVol[0] : null;
   const lbVolume    = parseFloat(lbData?.vol  || 0);
   const lbPnl       = parseFloat(lbData?.pnl  || 0);
   const lbRank      = lbData?.rank ? parseInt(lbData.rank) : null;
+  const lbRankVol   = lbVolData?.rank ? parseInt(lbVolData.rank) : null;
   const lbUserName  = lbData?.userName || null;
 
   const closedRealizedPnl= closed.reduce((s,p) => s + (parseFloat(p.realizedPnl)||0), 0);
@@ -1971,10 +1977,9 @@ function renderWallet(idx) {
       <div class="ts-label">✦ Maior Ganho</div>
       <div class="ts-val ${biggestWin > 0 ? 'pos-green' : ''}">${biggestWin > 0 ? '+' + fmt$(biggestWin) : '—'}</div>
     </div>
-    <div class="ts-sep"></div>
     <div class="ts-item">
-      <div class="ts-label">⚑ Rank Global</div>
-      <div class="ts-val" style="color:var(--yellow)">${lbRank ? '#' + lbRank.toLocaleString() : '—'}</div>
+      <div class="ts-label">⬡ Rank Volume</div>
+      <div class="ts-val" style="color:var(--yellow)">${lbRankVol ? '#' + lbRankVol.toLocaleString() : (lbRank ? '#' + lbRank.toLocaleString() : '—')}</div>
     </div>
   </div>`;
 
@@ -2314,10 +2319,12 @@ function renderOverview() {
 
     const { total, posVal, cash } = walletTotal(d);
     const lbRow   = Array.isArray(d.leaderboard) ? d.leaderboard[0] : null;
+    const lbVolRow = Array.isArray(d.leaderboardVol) ? d.leaderboardVol[0] : null;
     const pnl     = parseFloat(lbRow?.pnl || 0);
     const vol     = parseFloat(lbRow?.vol || 0);
     const name    = lbRow?.userName || w.label;
-    const rank    = lbRow?.rank ? '#' + parseInt(lbRow.rank).toLocaleString() : '—';
+    const rVal    = lbVolRow?.volumeRank || lbVolRow?.rank || lbRow?.volumeRank || lbRow?.rank;
+    const rank    = rVal ? '#' + parseInt(rVal).toLocaleString() : '—';
     const closedOv = Array.isArray(d.closed) ? d.closed : [];
     const closedOvIds = new Set(closedOv.map(p => p.conditionId).filter(Boolean));
     const positions = (Array.isArray(d.positions) ? d.positions : []).filter(p => {
@@ -2409,10 +2416,12 @@ function renderOverview() {
   const bannerData = WALLETS.map((w, i) => {
     const d = walletData[i];
     const lbRow = d ? (Array.isArray(d.leaderboard) ? d.leaderboard[0] : null) : null;
+    const lbVolRow = d ? (Array.isArray(d.leaderboardVol) ? d.leaderboardVol[0] : null) : null;
     const pnl    = parseFloat(lbRow?.pnl || 0);
     const vol    = parseFloat(lbRow?.vol || 0);
     const name   = lbRow?.userName || w.label;
-    const rank   = lbRow?.rank ? '#' + parseInt(lbRow.rank).toLocaleString() : '—';
+    const rVal   = lbVolRow?.volumeRank || lbVolRow?.rank || lbRow?.volumeRank || lbRow?.rank;
+    const rank   = rVal ? '#' + parseInt(rVal).toLocaleString() : '—';
     const closed = Array.isArray(d?.closed) ? d.closed : [];
     const bigWin = closed.length > 0 ? Math.max(...closed.map(p => parseFloat(p.realizedPnl)||0)) : 0;
     return { w, i, pnl, vol, name, rank, bigWin };
@@ -2564,9 +2573,11 @@ function renderLive() {
     let total = posVal + cash;
     if (cash < 0.01 && d?.value?.value) { const api = parseFloat(d.value.value)||0; if (api > posVal) total = api; }
     const lb = Array.isArray(d?.leaderboard) ? d.leaderboard[0] : null;
+    const lbVol = Array.isArray(d?.leaderboardVol) ? d.leaderboardVol[0] : null;
     const pnl = parseFloat(lb?.pnl || 0);
     const vol = parseFloat(lb?.vol || 0);
-    const rank = lb?.rank ? parseInt(lb.rank) : null;
+    const rVal = lbVol?.volumeRank || lbVol?.rank || lb?.volumeRank || lb?.rank;
+    const rank = rVal ? parseInt(rVal) : null;
     const name = lb?.userName || w.label;
     const posCount = positions.filter(p => (parseFloat(p.currentValue)||0) > 0.01).length;
     const closedCount = closed.length;
@@ -2680,8 +2691,8 @@ function renderLive() {
 
   html += `</tbody></table></div></div>`;
 
-  // ── Activity feed (all wallets merged) ──
-  const allActivity = infos.flatMap((info, i) =>
+  // ── Activity feed (all wallets merged and grouped) ──
+  const rawActivity = infos.flatMap((info, i) =>
     (info?.activity || []).slice(0, 8).map(a => ({ ...a, _wi: i }))
   ).filter(a => {
     const type = (a.type || '').toUpperCase();
@@ -2690,7 +2701,44 @@ function renderLive() {
     const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
     const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
     return tB - tA;
-  }).slice(0, 20);
+  });
+
+  const groupedActivity = [];
+  rawActivity.forEach(a => {
+    const typeStr = (a.type || '').toUpperCase();
+    const price = parseFloat(a.price) || 0;
+    const isSell = typeStr === 'SELL' || typeStr.includes('SELL') || typeStr.includes('VENDA') || price >= 0.999;
+    const actionStr = isSell ? 'SELL' : 'BUY';
+    const outcomeStr = (a.outcome || '').toUpperCase();
+    const marketTitle = a.title || a.market || '—';
+    const marketKey = marketTitle + '|' + outcomeStr + '|' + actionStr;
+    const time = new Date(a.timestamp || a.createdAt || 0).getTime();
+
+    const existingGroup = groupedActivity.find(g => 
+      g.key === marketKey && Math.abs(g.time - time) < 30 * 60 * 1000 // 30 mins window
+    );
+
+    if (existingGroup) {
+      if (!existingGroup.items.some(item => item._wi === a._wi)) {
+        existingGroup.items.push(a);
+        existingGroup.totalUsdc += parseFloat(a.usdcSize || a.amount) || 0;
+      }
+    } else {
+      groupedActivity.push({
+        key: marketKey,
+        time: time,
+        isSell: isSell,
+        outcome: outcomeStr,
+        marketTitle: marketTitle,
+        typeStr: typeStr,
+        latestPrice: price,
+        items: [a],
+        totalUsdc: parseFloat(a.usdcSize || a.amount) || 0
+      });
+    }
+  });
+
+  const displayActivity = groupedActivity.slice(0, 20);
 
   html += `<div style="height:12px"></div>`;
 
@@ -2699,34 +2747,37 @@ function renderLive() {
       <div class="onchain-activity-header">
         <span class="onchain-live-dot" style="width:5px;height:5px"></span>
         <span>ATIVIDADE RECENTE · TODAS AS WALLETS</span>
-        <span style="color:var(--muted);font-size:11px;margin-left:auto">${allActivity.length} eventos</span>
+        <span style="color:var(--muted);font-size:11px;margin-left:auto">${displayActivity.length} eventos</span>
       </div>
       <div class="onchain-activity-list">`;
 
-  if (allActivity.length === 0) {
+  if (displayActivity.length === 0) {
     html += `<div class="empty-state" style="padding:20px">Nenhuma atividade recente</div>`;
   } else {
-    allActivity.forEach((a, ai) => {
-      const ww = WALLETS[a._wi];
-      const type = (a.type || '').toUpperCase();
-      const isRedeem = type.includes('REDEEM');
-      const isSell = type.includes('SELL') || isRedeem;
-      let icon, tagColor;
-      if (isRedeem)    { icon = '★'; tagColor = 'var(--blue)'; }
-      else if (isSell) { icon = '▼'; tagColor = 'var(--red)'; }
-      else             { icon = '▲'; tagColor = 'var(--green)'; }
-      const outcome = (a.outcome || '').toUpperCase();
-      const isYes = outcome === 'YES';
-      const price = parseFloat(a.price) || 0;
-      const usdcSize = parseFloat(a.usdcSize || a.amount) || 0;
-      html += `<div class="onchain-act-row${ai === 0 ? ' onchain-act-latest' : ''}">
-        <span style="color:${ww.color};font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;min-width:28px">${ww.label}</span>
-        <div class="onchain-act-icon" style="color:${tagColor}">${icon}</div>
-        <div class="onchain-act-type" style="color:${tagColor}">${type||'—'}</div>
-        ${outcome ? `<span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}" style="font-size:10px;padding:2px 6px">${outcome}</span>` : ''}
-        <div class="onchain-act-market">${a.title || a.market || '—'}</div>
+    displayActivity.forEach((g, gi) => {
+      let icon, tagColor, badgeClass, badgeText;
+      if (g.isSell) { icon = '▼'; tagColor = 'var(--red)'; badgeClass = 'sell'; badgeText = 'SELL'; }
+      else          { icon = '▲'; tagColor = 'var(--green)'; badgeClass = 'buy'; badgeText = 'BUY'; }
+      
+      const isYes = g.outcome === 'YES';
+      const price = g.latestPrice;
+      const usdcSize = g.totalUsdc;
+
+      let walletsHtml = '';
+      g.items.forEach(item => {
+         const ww = WALLETS[item._wi];
+         if(ww) {
+           walletsHtml += `<span title="${ww.label}" style="display:inline-block;border-radius:50px;background:${ww.color};color:#000;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:800;padding:4px 8px;margin-left:4px;border:1px solid rgba(255,255,255,0.3);line-height:1;vertical-align:middle;">${ww.label}</span>`;
+         }
+      });
+
+      html += `<div class="onchain-act-row${gi === 0 ? ' onchain-act-latest' : ''}">
+        <div class="onchain-act-icon" style="color:${tagColor};margin-left:8px">${icon}</div>
+        <div class="onchain-act-type"><span class="trade-toast-badge ${badgeClass}">${badgeText}</span></div>
+        ${g.outcome ? `<span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}" style="font-size:10px;padding:2px 6px">${g.outcome}</span>` : ''}
+        <div class="onchain-act-market">${g.marketTitle} <span style="display:inline-flex;align-items:center;vertical-align:middle;margin-left:6px">${walletsHtml}</span></div>
         <div class="onchain-act-val">${usdcSize > 0 ? fmt$(usdcSize) : ''}${price > 0 ? ' @ '+(price*100).toFixed(1)+'¢' : ''}</div>
-        <div class="onchain-act-time">${fmtDate(a.timestamp || a.createdAt)}</div>
+        <div class="onchain-act-time">${fmtDate(g.items[0].timestamp || g.items[0].createdAt)}</div>
       </div>`;
     });
   }
@@ -3224,20 +3275,20 @@ function playNotifSound(type) {
 }
 
 // ─── Aggregating Trade Notification Panel ────────────────────────
-function getTradeCategory(typeStr) {
-  const t = (typeStr || '').toUpperCase();
-  if (t.includes('REDEEM')) return 'redeem';
-  if (t.includes('SELL')) return 'sell';
+function getTradeCategory(typeStr, priceVal) {
+  const t = (typeStr || '').toUpperCase().trim();
+  if (t === 'REDEEM' || t.includes('REDEEM')) return 'redeem';
+  if (t === 'SELL' || t === 'SELL_ORDER' || t.includes('SELL') || t.includes('VENDA') || (priceVal !== undefined && priceVal >= 0.999)) return 'sell';
   return 'buy';
 }
 
 function buildTradeEntryHTML(trade) {
   const w = trade._wallet;
   const type = (trade.type || '').toUpperCase();
-  const category = getTradeCategory(type);
+  const price = parseFloat(trade.price) || 0;
+  const category = getTradeCategory(type, price);
   const outcome = (trade.outcome || '').toUpperCase();
   const isYes = outcome === 'YES';
-  const price = parseFloat(trade.price) || 0;
   const usdcSize = parseFloat(trade.usdcSize || trade.amount) || 0;
   const marketTitle = trade.title || trade.market || '—';
   const cityImg = getCityImage(marketTitle);
