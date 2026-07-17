@@ -1726,6 +1726,15 @@ async function fetchPusdBalance(addr, retries = 3, delayMs = 0) {
   return 0;
 }
 
+// ─── 1Y helper (a API não suporta interval=1y; derivamos de ALL) ───
+// Série é array de { t: unix_seconds, p: pnl_acumulado }
+function filterLast365d(series) {
+  if (!Array.isArray(series) || series.length === 0) return [];
+  const cutoff = (Date.now() / 1000) - (365 * 86400);
+  const out = series.filter(pt => (typeof pt.t === 'number') && pt.t >= cutoff);
+  return out.length >= 2 ? out : [];
+}
+
 async function loadWallet(idx) {
   const addr = WALLETS[idx].addr;
   const [positions, closed, activity, value] = await Promise.all([
@@ -1752,7 +1761,10 @@ async function loadWallet(idx) {
     apiFetch(`${PNL_API}?user_address=${addr}&interval=1m&fidelity=1d`),
     apiFetch(`${PNL_API}?user_address=${addr}&interval=all&fidelity=12h`),
   ]);
-  const pnlSeries = { '1D': pnl1d, '1W': pnl1w, '1M': pnl1m, 'ALL': pnlAll };
+  // 1Y não é suportado pela API (HTTP 400 — só aceita 6h/12h/1d/1w/1m/all/max).
+  // Derivamos client-side da série ALL (fidelity 12h), filtrando os últimos 365 dias.
+  const pnl1y = filterLast365d(pnlAll);
+  const pnlSeries = { '1D': pnl1d, '1W': pnl1w, '1M': pnl1m, '1Y': pnl1y, 'ALL': pnlAll };
   console.log(`W${idx+1} pnlSeries ALL sample:`, JSON.stringify(pnlAll?.slice(0,2)));
 
   walletData[idx] = { positions, closed, activity, value, trades, pusdBalance, leaderboard, leaderboardVol, pnlSeries };
@@ -2288,6 +2300,166 @@ function setPnlPeriod(btn, period, idx) {
   drawPnlSvgChart(idx, period);
 }
 
+// ─── Consolidated (todas as wallets) ──────────────────────────────
+// Cada wallet tem uma série CUMULATIVA de PnL no período (o card individual
+// usa `último - primeiro`), mas com timestamps diferentes entre si. Se
+// somássemos só onde os t batem exatamente, a curva ficaria com buracos e o
+// `último - primeiro` não fecharia. Então fazemos forward-fill: em cada
+// instante da linha do tempo unificada, cada wallet contribui com seu último
+// valor conhecido até aquele t (wallets que ainda não existiam contribuem 0).
+// Assim a curva consolidada é a soma real do PnL de todas as wallets em cada
+// instante, e `último - primeiro` = soma dos deltas individuais (≠ Overview).
+function aggregatePnlSeries(period) {
+  const seriesList = walletData.map(d => {
+    const s = Array.isArray(d?.pnlSeries?.[period]) ? d.pnlSeries[period] : [];
+    return s.filter(pt => pt && typeof pt.t === 'number' && typeof pt.p === 'number')
+            .sort((a, b) => a.t - b.t);
+  }).filter(s => s.length > 0);
+
+  if (seriesList.length === 0) return [];
+
+  // União de todos os timestamps, ordenada
+  const unionTs = Array.from(new Set(
+    seriesList.flatMap(s => s.map(pt => pt.t))
+  )).sort((a, b) => a - b);
+
+  // Ponteiro por wallet: índice do último ponto consumido (pt.t <= t atual)
+  const ptr = seriesList.map(() => 0);
+  const result = [];
+  for (const t of unionTs) {
+    let sum = 0;
+    for (let wi = 0; wi < seriesList.length; wi++) {
+      const s = seriesList[wi];
+      while (ptr[wi] + 1 < s.length && s[ptr[wi] + 1].t <= t) ptr[wi]++;
+      // Se s[ptr].t <= t, usa esse valor; caso contrário a wallet ainda não
+      // havia começado (s[0].t > t) e contribui 0.
+      if (s[ptr[wi]].t <= t) sum += s[ptr[wi]].p;
+    }
+    result.push({ t, p: sum });
+  }
+  return result;
+}
+
+// Versão do drawPnlSvgChart para o card consolidado (sem idx — dados agregados)
+function drawConsolidatedSvgChart(period) {
+  const svg = document.getElementById('pnl-svg-consolidated');
+  if (!svg) return;
+  const series = aggregatePnlSeries(period);
+
+  svg.innerHTML = '';
+
+  if (series.length < 2) {
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('x', '200'); text.setAttribute('y', '45');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', '#555575');
+    text.setAttribute('font-size', '11');
+    text.setAttribute('font-family', 'Share Tech Mono, monospace');
+    text.textContent = 'sem dados para este período';
+    svg.appendChild(text);
+    return;
+  }
+
+  const W = 400, H = 80, pad = 4;
+  const xs = series.map(p => p.t);
+  const ys = series.map(p => p.p);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const rangeX = maxX - minX || 1;
+  const rangeY = maxY - minY || 0.01;
+
+  const toSX = x => pad + ((x - minX) / rangeX) * (W - 2 * pad);
+  const toSY = y => H - pad - ((y - minY) / rangeY) * (H - 2 * pad);
+
+  const finalPnl = ys[ys.length - 1];
+  const isPos = finalPnl >= 0;
+  const lineColor = isPos ? '#00e5a0' : '#ff3c5a';
+  const fillColor = isPos ? 'rgba(0,229,160,0.12)' : 'rgba(255,60,90,0.12)';
+
+  const coords = series.map((p, i) =>
+    `${i === 0 ? 'M' : 'L'} ${toSX(p.t).toFixed(1)} ${toSY(p.p).toFixed(1)}`
+  ).join(' ');
+
+  // Fill area
+  const firstX = toSX(series[0].t).toFixed(1);
+  const lastX  = toSX(series[series.length - 1].t).toFixed(1);
+  const fillPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  fillPath.setAttribute('d', `${coords} L ${lastX} ${H} L ${firstX} ${H} Z`);
+  fillPath.setAttribute('fill', fillColor);
+  svg.appendChild(fillPath);
+
+  // Gradient line
+  const gradId = `grad-consolidated-${period}`;
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  const grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+  grad.setAttribute('id', gradId);
+  grad.setAttribute('x1', '0%'); grad.setAttribute('x2', '100%');
+  grad.setAttribute('y1', '0%'); grad.setAttribute('y2', '0%');
+  const s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+  s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#a855f7');
+  const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+  s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', lineColor);
+  grad.appendChild(s1); grad.appendChild(s2);
+  defs.appendChild(grad);
+  svg.appendChild(defs);
+
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  line.setAttribute('d', coords);
+  line.setAttribute('fill', 'none');
+  line.setAttribute('stroke', `url(#${gradId})`);
+  line.setAttribute('stroke-width', '2');
+  line.setAttribute('stroke-linecap', 'round');
+  line.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(line);
+
+  // End dot
+  const last = series[series.length - 1];
+  const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  dot.setAttribute('cx', toSX(last.t));
+  dot.setAttribute('cy', toSY(last.p));
+  dot.setAttribute('r', '3');
+  dot.setAttribute('fill', lineColor);
+  svg.appendChild(dot);
+
+  // Atualiza o valor do período no card consolidado
+  const pnlEl = document.getElementById('pnl-card-val-consolidated');
+  const triEl = document.getElementById('pnl-card-tri-consolidated');
+  const lblEl = document.getElementById('pnl-card-lbl-consolidated');
+  if (pnlEl) {
+    const periodPnl = ys[ys.length - 1] - ys[0];
+    const isP = periodPnl >= 0;
+    // % = delta / portfolio total (mesmo método do Polymarket)
+    const totalForPct = (function () {
+      const infos = WALLETS.map((_, i) => {
+        const d = walletData[i];
+        if (!d) return 0;
+        const posVal = (Array.isArray(d.positions) ? d.positions : []).reduce((a, p) => a + (parseFloat(p.currentValue) || 0), 0);
+        const onChain = typeof d.pusdBalance === 'number' ? d.pusdBalance : 0;
+        const apiCash = d.value ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance) || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0) : 0;
+        const cash = onChain >= 0.01 ? onChain : apiCash;
+        return posVal + cash;
+      });
+      return Math.max(infos.reduce((a, b) => a + b, 0), 0.01);
+    })();
+    const pct = (periodPnl / Math.max(totalForPct - periodPnl, 0.01)) * 100;
+    pnlEl.innerHTML = (isP ? '+' : '-') + '$' +
+      Math.abs(periodPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +
+      ` <span style="font-size:18px;font-weight:500;color:${isP ? 'var(--green)' : 'var(--red)'};letter-spacing:0">(${isP ? '+' : ''}${pct.toFixed(2)}%)</span>`;
+    pnlEl.className = 'pnl-card-value ' + (isP ? 'pos-green' : 'pos-red');
+    if (triEl) { triEl.textContent = isP ? '▲' : '▼'; triEl.className = 'pnl-triangle ' + (isP ? 'pos' : 'neg'); }
+    if (lblEl) {
+      const labels = { '1D': 'Past Day', '1W': 'Past Week', '1M': 'Past Month', '1Y': 'Past Year', 'ALL': 'All-Time' };
+      lblEl.textContent = 'Profit / Loss · ' + (labels[period] || period);
+    }
+  }
+}
+
+function setConsolidatedPeriod(btn, period) {
+  btn.closest('.pnl-period-tabs').querySelectorAll('.pnl-ptab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  drawConsolidatedSvgChart(period);
+}
+
 // ─── Overview (all wallets side by side) ─────────────────────────
 function renderOverview() {
   const el = document.getElementById('panel-overview');
@@ -2600,6 +2772,58 @@ function renderLive() {
 
   let html = `<div class="fade-in">`;
 
+  // ── Card consolidado (todas as wallets) — mesmo layout do card individual ──
+  const consCashSrc = infos.some(i => i?.cashSrc === 'on-chain') ? 'on-chain' : 'api';
+  html += `<div class="portfolio-summary-row">
+    <div class="pm-card">
+      <div class="pm-card-label"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 6px var(--green)"></span> ⬡ Portfolio Consolidado · ${WALLETS.length} Wallets</div>
+      <div class="pm-card-value">${fmt$(grandTotal)}</div>
+      <div class="pm-card-sub ${grandPnl >= 0 ? 'pos' : 'neg'}">
+        ${pnlSign(grandPnl)}${fmt$(grandPnl)} PnL realizado · <span style="color:var(--green);font-size:9px">⬡ todas as wallets</span>
+      </div>
+      <!-- Breakdown: posições + cash = total -->
+      <div style="margin-top:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:13px">
+        <span style="color:var(--muted)">Posições</span>
+        <span style="color:#fff;font-weight:700">${fmt$(grandPos)}</span>
+        <span style="color:var(--muted)">+</span>
+        <span style="color:var(--muted)">Cash</span>
+        <span style="color:var(--blue);font-weight:700">${fmt$(grandCash)}</span>
+        <span style="color:${consCashSrc==='on-chain'?'var(--green)':'var(--yellow)'};font-size:9px;letter-spacing:1px">${consCashSrc==='on-chain'?'⬡ on-chain':'~ api'}</span>
+        <span style="color:var(--muted)">=</span>
+        <span style="color:#fff;font-weight:700">${fmt$(grandTotal)}</span>
+      </div>
+      ${grandCash > 0 ? `
+      <div class="pm-card-available">
+        <div class="pm-available-label">Available to trade <span style="color:${consCashSrc==='on-chain'?'var(--green)':'var(--yellow)'};font-size:8px">${consCashSrc==='on-chain'?'⬡ polygon':'~ est'}</span></div>
+        <div class="pm-available-val" style="color:var(--blue)">${fmt$(grandCash)}</div>
+      </div>` : ''}
+    </div>
+    <div class="pnl-chart-card">
+      <div class="pnl-card-top">
+        <div class="pnl-card-left">
+          <div class="pnl-value-row">
+            <span class="pnl-triangle pos" id="pnl-card-tri-consolidated">▲</span>
+            <div class="pnl-card-value pos-green" id="pnl-card-val-consolidated">—</div>
+          </div>
+          <div class="pnl-card-period" id="pnl-card-lbl-consolidated">Profit / Loss · Past Day</div>
+          <div class="pnl-polymarket-badge">⬡ Polymarket · ${WALLETS.length} wallets</div>
+        </div>
+        <div>
+          <div class="pnl-period-tabs">
+            <button class="pnl-ptab active" onclick="setConsolidatedPeriod(this,'1D')">1D</button>
+            <button class="pnl-ptab" onclick="setConsolidatedPeriod(this,'1W')">1W</button>
+            <button class="pnl-ptab" onclick="setConsolidatedPeriod(this,'1M')">1M</button>
+            <button class="pnl-ptab" onclick="setConsolidatedPeriod(this,'1Y')">1Y</button>
+            <button class="pnl-ptab" onclick="setConsolidatedPeriod(this,'ALL')">ALL</button>
+          </div>
+        </div>
+      </div>
+      <div class="pnl-chart-area">
+        <svg id="pnl-svg-consolidated" viewBox="0 0 400 80" preserveAspectRatio="none" style="width:100%;height:90px;display:block;overflow:visible"></svg>
+      </div>
+    </div>
+  </div>`;
+
   // ── Header ──
   html += `<div class="onchain-panel" style="border-radius:6px;margin-bottom:20px">
     <div class="onchain-header" style="padding-bottom:0">
@@ -2705,9 +2929,11 @@ function renderLive() {
 
   const groupedActivity = [];
   rawActivity.forEach(a => {
-    const typeStr = (a.type || '').toUpperCase();
     const price = parseFloat(a.price) || 0;
-    const isSell = typeStr === 'SELL' || typeStr.includes('SELL') || typeStr.includes('VENDA') || price >= 0.999;
+    const typeStr = (a.type || '').toUpperCase();
+    const sideStr = (a.side || '').toUpperCase();
+    const actionApi = (a.action || '').toUpperCase();
+    const isSell = typeStr === 'SELL' || typeStr.includes('SELL') || typeStr.includes('VENDA') || sideStr === 'SELL' || actionApi === 'SELL' || parseFloat(a.size || a.amount) < 0 || price >= 0.9985;
     const actionStr = isSell ? 'SELL' : 'BUY';
     const outcomeStr = (a.outcome || '').toUpperCase();
     const marketTitle = a.title || a.market || '—';
@@ -2786,6 +3012,9 @@ function renderLive() {
   html += `</div>`;
 
   el.innerHTML = html;
+
+  // Desenha o gráfico consolidado (default 1D) após o DOM estar pronto
+  setTimeout(() => drawConsolidatedSvgChart('1D'), 50);
 }
 
 // ─── Combined view ────────────────────────────────────────────────
@@ -3275,10 +3504,13 @@ function playNotifSound(type) {
 }
 
 // ─── Aggregating Trade Notification Panel ────────────────────────
-function getTradeCategory(typeStr, priceVal) {
+function getTradeCategory(typeStr, priceVal, tradeObj) {
   const t = (typeStr || '').toUpperCase().trim();
+  const side = tradeObj ? (tradeObj.side || '').toUpperCase().trim() : '';
+  const action = tradeObj ? (tradeObj.action || '').toUpperCase().trim() : '';
+  const size = tradeObj ? parseFloat(tradeObj.size || tradeObj.amount) : 0;
   if (t === 'REDEEM' || t.includes('REDEEM')) return 'redeem';
-  if (t === 'SELL' || t === 'SELL_ORDER' || t.includes('SELL') || t.includes('VENDA') || (priceVal !== undefined && priceVal >= 0.999)) return 'sell';
+  if (t === 'SELL' || t === 'SELL_ORDER' || t.includes('SELL') || t.includes('VENDA') || side === 'SELL' || action === 'SELL' || size < 0 || (priceVal !== undefined && priceVal >= 0.9985)) return 'sell';
   return 'buy';
 }
 
@@ -3286,7 +3518,7 @@ function buildTradeEntryHTML(trade) {
   const w = trade._wallet;
   const type = (trade.type || '').toUpperCase();
   const price = parseFloat(trade.price) || 0;
-  const category = getTradeCategory(type, price);
+  const category = getTradeCategory(type, price, trade);
   const outcome = (trade.outcome || '').toUpperCase();
   const isYes = outcome === 'YES';
   const usdcSize = parseFloat(trade.usdcSize || trade.amount) || 0;
@@ -3440,7 +3672,7 @@ function checkForNewTrades() {
     // Priority: redeem > sell > buy
     let soundType = 'buy';
     for (const t of toShow) {
-      const cat = getTradeCategory(t.type);
+      const cat = getTradeCategory(t.type, parseFloat(t.price), t);
       if (cat === 'redeem') { soundType = 'redeem'; break; }
       if (cat === 'sell') soundType = 'sell';
     }
