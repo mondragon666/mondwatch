@@ -1126,11 +1126,48 @@ tbody tr:last-child td { border-bottom: none; }
 .ov-ts-sep { width:1px; height:40px; background:var(--border); margin:0 20px; flex-shrink:0; }
 
 /* OVERVIEW PNL CHARTS ROW */
+/* OVERVIEW GLOBAL PERIOD BAR */
+.ov-global-period-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
+}
+.ov-global-period-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.ov-global-period-tabs { display: flex; gap: 6px; margin-left: auto; }
+.ov-global-ptab {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.ov-global-ptab:hover { color: var(--text); border-color: var(--muted); }
+.ov-global-ptab.active {
+  background: var(--green);
+  color: #000;
+  border-color: var(--green);
+  box-shadow: 0 0 12px rgba(0,229,160,0.25);
+}
 .ov-pnl-row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 8px;
 }
 @media (max-width: 1200px) { .ov-pnl-row { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 700px) { .ov-pnl-row { grid-template-columns: 1fr; } }
@@ -1363,6 +1400,48 @@ tbody tr:last-child td { border-bottom: none; }
   min-width: 55px;
   text-align: right;
 }
+
+/* LIVE ACTIVITY FILTER BUTTONS */
+.live-filter-group {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  align-items: center;
+}
+.live-filter-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  padding: 4px 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  text-transform: uppercase;
+  transition: all 0.15s;
+  opacity: 0.5;
+}
+.live-filter-btn:hover { opacity: 0.85; }
+.live-filter-btn:not(.active) { text-decoration: line-through; }
+.live-filter-btn.active { opacity: 1; }
+.live-filter-btn.buy.active {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(0,229,160,0.10);
+}
+.live-filter-btn.sell.active {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(255,60,90,0.10);
+}
+.live-filter-btn.redeem.active {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: rgba(77,159,255,0.10);
+}
+.live-evt-count { margin-left: 12px; white-space: nowrap; }
 
 /* LIVE WALLET ROWS — table layout for perfect alignment */
 .live-table {
@@ -2557,6 +2636,12 @@ function renderOverview() {
   html += `</div>`;
 
   // ── Row 2: PnL charts side by side ─────────────────────────────
+  html += `<div class="ov-global-period-bar">
+    <span class="ov-global-period-label">◱ Período dos Gráficos · Todas as Wallets</span>
+    <div class="ov-global-period-tabs">
+      ${['1D','1W','1M','ALL'].map(p=>`<button class="ov-global-ptab${ovGlobalPeriod===p?' active':''}" onclick="setAllOvPeriod('${p}')">${p}</button>`).join('')}
+    </div>
+  </div>`;
   html += `<div class="ov-pnl-row">`;
   WALLETS.forEach((w, i) => {
     const d = walletData[i];
@@ -2573,10 +2658,7 @@ function renderOverview() {
           <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${w.color};margin-top:4px">${w.label}</div>
         </div>
         <div class="pnl-period-tabs">
-          <button class="pnl-ptab" onclick="setOvPeriod(this,'1D',${i})">1D</button>
-          <button class="pnl-ptab" onclick="setOvPeriod(this,'1W',${i})">1W</button>
-          <button class="pnl-ptab" onclick="setOvPeriod(this,'1M',${i})">1M</button>
-          <button class="pnl-ptab active" onclick="setOvPeriod(this,'ALL',${i})">ALL</button>
+          ${['1D','1W','1M','ALL'].map(p=>`<button class="pnl-ptab${ovGlobalPeriod===p?' active':''}" onclick="setOvPeriod(this,'${p}',${i})">${p}</button>`).join('')}
         </div>
       </div>
       <div class="pnl-chart-area">
@@ -2637,7 +2719,7 @@ function renderOverview() {
 
   // Draw all charts
   setTimeout(() => {
-    WALLETS.forEach((w, i) => drawOvChart(i, 'ALL'));
+    WALLETS.forEach((w, i) => drawOvChart(i, ovGlobalPeriod));
   }, 60);
 }
 
@@ -2714,6 +2796,23 @@ function drawOvChart(idx, period) {
   }
 }
 
+let ovGlobalPeriod = 'ALL';
+function setAllOvPeriod(period) {
+  ovGlobalPeriod = period;
+  document.querySelectorAll('.ov-global-ptab').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === period);
+  });
+  WALLETS.forEach((w, i) => {
+    const svg = document.getElementById(`ov-svg-${i}`);
+    const card = svg ? svg.closest('.pnl-chart-card') : null;
+    if (card) {
+      card.querySelectorAll('.pnl-ptab').forEach(b => {
+        b.classList.toggle('active', b.textContent.trim() === period);
+      });
+    }
+    drawOvChart(i, period);
+  });
+}
 function setOvPeriod(btn, period, idx) {
   btn.closest('.pnl-period-tabs').querySelectorAll('.pnl-ptab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -2920,10 +3019,7 @@ function renderLive() {
   // ── Activity feed (all wallets merged and grouped) ──
   const rawActivity = infos.flatMap((info, i) =>
     (info?.activity || []).slice(0, 8).map(a => ({ ...a, _wi: i }))
-  ).filter(a => {
-    const type = (a.type || '').toUpperCase();
-    return !type.includes('REDEEM');
-  }).sort((a, b) => {
+  ).sort((a, b) => {
     const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
     const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
     return tB - tA;
@@ -2935,8 +3031,10 @@ function renderLive() {
     const typeStr = (a.type || '').toUpperCase();
     const sideStr = (a.side || '').toUpperCase();
     const actionApi = (a.action || '').toUpperCase();
-    const isSell = typeStr === 'SELL' || typeStr.includes('SELL') || typeStr.includes('VENDA') || sideStr === 'SELL' || actionApi === 'SELL' || parseFloat(a.size || a.amount) < 0 || price >= 0.9985;
-    const actionStr = isSell ? 'SELL' : 'BUY';
+    const isRedeem = typeStr.includes('REDEEM') || sideStr === 'REDEEM' || actionApi === 'REDEEM';
+    const isSell = !isRedeem && (typeStr === 'SELL' || typeStr.includes('SELL') || typeStr.includes('VENDA') || sideStr === 'SELL' || actionApi === 'SELL' || parseFloat(a.size || a.amount) < 0 || price >= 0.9985);
+    const gType = isRedeem ? 'redeem' : (isSell ? 'sell' : 'buy');
+    const actionStr = gType.toUpperCase();
     const outcomeStr = (a.outcome || '').toUpperCase();
     const marketTitle = a.title || a.market || '—';
     const marketKey = marketTitle + '|' + outcomeStr + '|' + actionStr;
@@ -2956,6 +3054,7 @@ function renderLive() {
         key: marketKey,
         time: time,
         isSell: isSell,
+        gType: gType,
         outcome: outcomeStr,
         marketTitle: marketTitle,
         typeStr: typeStr,
@@ -2975,7 +3074,12 @@ function renderLive() {
       <div class="onchain-activity-header">
         <span class="onchain-live-dot" style="width:5px;height:5px"></span>
         <span>ATIVIDADE RECENTE · TODAS AS WALLETS</span>
-        <span style="color:var(--muted);font-size:11px;margin-left:auto">${displayActivity.length} eventos</span>
+        <div class="live-filter-group">
+          <button type="button" class="live-filter-btn buy" data-filter="buy" onclick="toggleLiveFilter('buy')">BUY</button>
+          <button type="button" class="live-filter-btn sell" data-filter="sell" onclick="toggleLiveFilter('sell')">SELL</button>
+          <button type="button" class="live-filter-btn redeem" data-filter="redeem" onclick="toggleLiveFilter('redeem')">REDEEM</button>
+        </div>
+        <span class="live-evt-count" style="color:var(--muted);font-size:11px">${displayActivity.length} eventos</span>
       </div>
       <div class="onchain-activity-list">`;
 
@@ -2984,7 +3088,8 @@ function renderLive() {
   } else {
     displayActivity.forEach((g, gi) => {
       let icon, tagColor, badgeClass, badgeText;
-      if (g.isSell) { icon = '▼'; tagColor = 'var(--red)'; badgeClass = 'sell'; badgeText = 'SELL'; }
+      if (g.gType === 'redeem') { icon = '●'; tagColor = 'var(--blue)'; badgeClass = 'redeem'; badgeText = 'REDEEM'; }
+      else if (g.isSell) { icon = '▼'; tagColor = 'var(--red)'; badgeClass = 'sell'; badgeText = 'SELL'; }
       else          { icon = '▲'; tagColor = 'var(--green)'; badgeClass = 'buy'; badgeText = 'BUY'; }
       
       const isYes = g.outcome === 'YES';
@@ -2999,7 +3104,7 @@ function renderLive() {
          }
       });
 
-      html += `<div class="onchain-act-row${gi === 0 ? ' onchain-act-latest' : ''}">
+      html += `<div class="onchain-act-row${gi === 0 ? ' onchain-act-latest' : ''}" data-acttype="${g.gType}">
         <div class="onchain-act-icon" style="color:${tagColor};margin-left:8px">${icon}</div>
         <div class="onchain-act-type"><span class="trade-toast-badge ${badgeClass}">${badgeText}</span></div>
         ${g.outcome ? `<span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}" style="font-size:10px;padding:2px 6px">${g.outcome}</span>` : ''}
@@ -3015,8 +3120,34 @@ function renderLive() {
 
   el.innerHTML = html;
 
+  applyLiveFilter();
+
   // Desenha o gráfico consolidado (default 1D) após o DOM estar pronto
   setTimeout(() => drawConsolidatedSvgChart('1D'), 50);
+}
+
+// ─── Filtro de tipo da atividade LIVE (BUY / SELL / REDEEM) ──────────
+let liveFilter = { buy: true, sell: true, redeem: true };
+function applyLiveFilter() {
+  const rows = document.querySelectorAll('.onchain-act-row[data-acttype]');
+  let visible = 0;
+  rows.forEach(r => {
+    const t = r.getAttribute('data-acttype');
+    if (liveFilter[t]) { r.style.display = ''; visible++; }
+    else { r.style.display = 'none'; }
+  });
+  ['buy','sell','redeem'].forEach(t => {
+    document.querySelectorAll('.live-filter-btn[data-filter="' + t + '"]').forEach(b => {
+      b.classList.toggle('active', !!liveFilter[t]);
+    });
+  });
+  const cnt = document.querySelector('.live-evt-count');
+  if (cnt) cnt.textContent = visible + ' eventos';
+}
+function toggleLiveFilter(type) {
+  if (!(type in liveFilter)) return;
+  liveFilter[type] = !liveFilter[type];
+  applyLiveFilter();
 }
 
 // ─── Combined view ────────────────────────────────────────────────
