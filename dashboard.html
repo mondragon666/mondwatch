@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mondwatch · Portfolio Dashboard</title>
+<title>Mondwatch v16 · Portfolio Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
 
@@ -13,17 +13,17 @@
   --s2:       #0f0f18;
   --border:   #1c1c2e;
   --border2:  #252540;
-  --green:    #00e5a0;
-  --red:      #ff3c5a;
-  --blue:     #4d9fff;
-  --yellow:   #ffcc00;
-  --purple:   #a855f7;
+  --green:    #4fb286;
+  --red:      #d1495b;
+  --blue:     #6fa8e0;
+  --yellow:   #c9a227;
+  --purple:   #8b7ec8;
   --text:     #e0e0f0;
   --muted:    #555575;
   --w0:       #fb7185;
-  --w1:       #00e5a0;
-  --w2:       #4d9fff;
-  --w3:       #a855f7;
+  --w1:       #4fb286;
+  --w2:       #6fa8e0;
+  --w3:       #8b7ec8;
   --w4:		  #ec4899; /* Rosa Vibrante (Pink) */
   --w5:       #f97316; /* Laranja Energético (Orange) */
   --w6:       #06b6d4; /* Cyan/Turquesa - Equilíbrio entre o Green e o Blue */
@@ -40,7 +40,7 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Rajdhani', sans-serif;
+  font-family: 'IBM Plex Sans','IBM Plex Sans','Rajdhani',sans-serif;
   font-size: 15px;
   min-height: 100vh;
   overflow-x: hidden;
@@ -112,7 +112,7 @@ header {
   background: transparent;
   border: 1px solid var(--border2);
   color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 11px;
   padding: 7px 14px;
   cursor: pointer;
@@ -165,7 +165,7 @@ header {
 /* Removido: animação no próprio botão que causava deslocamento */
 
 .last-update {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 1px;
@@ -193,7 +193,7 @@ header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   white-space: nowrap;
 }
 .wtab:hover { color: var(--text); }
@@ -247,7 +247,7 @@ header {
 }
 .kpi:hover { border-color: var(--border2); }
 .kpi-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -262,7 +262,7 @@ header {
 }
 .kpi-val.neutral { color: #fff; }
 .kpi-sub {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   margin-top: 4px;
@@ -270,7 +270,7 @@ header {
 
 /* SECTION TITLE */
 .sec-title {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   letter-spacing: 3px;
   color: var(--muted);
@@ -321,14 +321,14 @@ header {
   justify-content: space-between;
 }
 .table-header-title {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--muted);
   text-transform: uppercase;
 }
 .table-count {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   background: var(--border);
@@ -341,7 +341,7 @@ thead { background: var(--s2); }
 th {
   padding: 10px 14px;
   text-align: left;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -372,11 +372,11 @@ tbody tr:last-child td { border-bottom: none; }
   border-radius: 2px;
   font-size: 11px;
   font-weight: 700;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   letter-spacing: 1px;
 }
-.outcome-yes { background: rgba(0,229,160,0.12); color: var(--green); }
-.outcome-no  { background: rgba(255,60,90,0.12);  color: var(--red); }
+.outcome-yes { background: rgba(79,178,134,0.12); color: var(--green); }
+.outcome-no  { background: rgba(209,73,91,0.12);  color: var(--red); }
 
 .pos-green { color: var(--green); font-weight: 700; }
 .pos-red   { color: var(--red);   font-weight: 700; }
@@ -425,7 +425,7 @@ tbody tr:last-child td { border-bottom: none; }
   margin: 0 auto 16px;
 }
 .loading-state p {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 12px;
   letter-spacing: 2px;
 }
@@ -435,7 +435,7 @@ tbody tr:last-child td { border-bottom: none; }
   padding: 40px 20px;
   text-align: center;
   color: var(--red);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 12px;
   letter-spacing: 1px;
 }
@@ -458,11 +458,11 @@ tbody tr:last-child td { border-bottom: none; }
   flex-shrink: 0;
   margin-top: 2px;
 }
-.act-buy  { background: rgba(0,229,160,0.12); color: var(--green); }
-.act-sell { background: rgba(255,60,90,0.12);  color: var(--red); }
-.act-redeem { background: rgba(77,159,255,0.12); color: var(--blue); }
+.act-buy  { background: rgba(79,178,134,0.12); color: var(--green); }
+.act-sell { background: rgba(209,73,91,0.12);  color: var(--red); }
+.act-redeem { background: rgba(111,168,224,0.12); color: var(--blue); }
 .act-time {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   margin-top: 2px;
@@ -471,7 +471,7 @@ tbody tr:last-child td { border-bottom: none; }
 
 /* PRICE BADGE */
 .price-badge {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 12px;
   padding: 2px 7px;
   border-radius: 2px;
@@ -483,7 +483,7 @@ tbody tr:last-child td { border-bottom: none; }
   padding: 40px 20px;
   text-align: center;
   color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 11px;
   letter-spacing: 1px;
 }
@@ -502,7 +502,7 @@ tbody tr:last-child td { border-bottom: none; }
   padding: 6px 14px;
   border-radius: 20px;
   border: 1px solid;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 11px;
   letter-spacing: 1px;
 }
@@ -528,10 +528,10 @@ tbody tr:last-child td { border-bottom: none; }
   position: absolute;
   bottom: 16px;
   right: 20px;
-  background: rgba(0,229,160,0.08);
+  background: rgba(79,178,134,0.08);
   border: 1px solid var(--border2);
   color: var(--green);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 16px;
   padding: 14px 32px;
   cursor: pointer;
@@ -545,9 +545,9 @@ tbody tr:last-child td { border-bottom: none; }
   z-index: 2;
 }
 .pm-card-refresh:hover {
-  background: rgba(0,229,160,0.15);
+  background: rgba(79,178,134,0.15);
   border-color: var(--green);
-  box-shadow: 0 0 12px rgba(0,229,160,0.15);
+  box-shadow: 0 0 12px rgba(79,178,134,0.15);
 }
 .pm-card-refresh:disabled {
   opacity: 0.4;
@@ -566,7 +566,7 @@ tbody tr:last-child td { border-bottom: none; }
   transform-origin: center center;
 }
 .pm-card-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 11px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -582,11 +582,11 @@ tbody tr:last-child td { border-bottom: none; }
   font-weight: 700;
   line-height: 1;
   #color: #fff;
-  color: #FFD700;
+  color: #f2f3f5;
   letter-spacing: -2px;
 }
 .pm-card-sub {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 13px;
   margin-top: 10px;
 }
@@ -601,7 +601,7 @@ tbody tr:last-child td { border-bottom: none; }
   text-align: right;
 }
 .pm-available-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -650,7 +650,7 @@ tbody tr:last-child td { border-bottom: none; }
   letter-spacing: -1px;
 }
 .pnl-card-period {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   margin-top: 4px;
@@ -662,7 +662,7 @@ tbody tr:last-child td { border-bottom: none; }
   align-items: center;
 }
 .pnl-ptab {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 11px;
   letter-spacing: 1px;
   padding: 4px 10px;
@@ -679,7 +679,7 @@ tbody tr:last-child td { border-bottom: none; }
   color: #fff;
 }
 .pnl-polymarket-badge {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 1px;
@@ -729,7 +729,7 @@ tbody tr:last-child td { border-bottom: none; }
   opacity: 0;
   transform: translateY(30px) scale(0.95);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(0,229,160,0.08);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(79,178,134,0.08);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -766,7 +766,7 @@ tbody tr:last-child td { border-bottom: none; }
   touch-action: manipulation;
 }
 .trade-toast-close:hover {
-  background: rgba(255,60,90,0.4);
+  background: rgba(209,73,91,0.4);
   border-color: var(--red);
 }
 /* Panel header (count + timer) */
@@ -779,7 +779,7 @@ tbody tr:last-child td { border-bottom: none; }
   background: var(--s2);
 }
 .trade-toast-panel-title {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--green);
@@ -787,7 +787,7 @@ tbody tr:last-child td { border-bottom: none; }
   font-weight: 700;
 }
 .trade-toast-panel-count {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   background: var(--border2);
   color: var(--text);
@@ -804,7 +804,7 @@ tbody tr:last-child td { border-bottom: none; }
 }
 /* Blur toggle button */
 .trade-toast-blur-btn {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 1px;
   padding: 2px 8px;
@@ -821,7 +821,7 @@ tbody tr:last-child td { border-bottom: none; }
   color: var(--yellow);
 }
 .trade-toast-blur-btn.active {
-  background: rgba(255,204,0,0.1);
+  background: rgba(201,162,39,0.1);
   border-color: var(--yellow);
   color: var(--yellow);
 }
@@ -868,7 +868,7 @@ tbody tr:last-child td { border-bottom: none; }
   gap: 8px;
 }
 .trade-toast-badge {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   font-weight: 700;
   padding: 3px 10px;
@@ -889,7 +889,7 @@ tbody tr:last-child td { border-bottom: none; }
   color: #fff;
 }
 .trade-toast-time {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 11px;
   color: rgba(255,255,255,0.5);
 }
@@ -916,7 +916,7 @@ tbody tr:last-child td { border-bottom: none; }
   padding: 8px 12px;
 }
 .trade-toast-stat-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -942,18 +942,18 @@ tbody tr:last-child td { border-bottom: none; }
   flex-shrink: 0;
 }
 .trade-toast-wallet-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 12px;
   color: var(--muted);
 }
 .trade-toast-wallet-addr {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 12px;
   margin-left: auto;
 }
 .trade-toast-amount {
   text-align: center;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 11px;
   color: var(--muted);
   margin-top: 8px;
@@ -994,7 +994,7 @@ tbody tr:last-child td { border-bottom: none; }
   min-width: 0;
 }
 .ts-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -1035,11 +1035,11 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .ov-wallet-card:hover { border-color: var(--wc, var(--green)); }
 .ov-w-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
-.ov-w-label { font-size:14px; font-weight:700; letter-spacing:2px; font-family:'Share Tech Mono',monospace; }
+.ov-w-label { font-size:14px; font-weight:700; letter-spacing:2px; font-family:'IBM Plex Mono','Share Tech Mono',monospace; }
 .ov-total { font-size:32px; font-weight:700; color:#fff; letter-spacing:-1px; margin-bottom:12px; }
 .ov-breakdown { display:flex; gap:0; margin-bottom:8px; }
 .ov-bitem { flex:1; }
-.ov-blabel { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; margin-bottom:2px; }
+.ov-blabel { font-family:'IBM Plex Mono','Share Tech Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; margin-bottom:2px; }
 .ov-bval { font-size:16px; font-weight:700; color:#fff; }
 .ov-divider { height:1px; background:var(--border); margin:10px 0; }
 
@@ -1060,7 +1060,7 @@ tbody tr:last-child td { border-bottom: none; }
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   padding: 4px 10px;
   cursor: pointer;
@@ -1078,11 +1078,11 @@ tbody tr:last-child td { border-bottom: none; }
   top: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   padding: 3px 10px;
   letter-spacing: 1px;
-  background: rgba(255,204,0,0.08);
+  background: rgba(201,162,39,0.08);
   border: 1px solid var(--border2);
   color: var(--yellow);
   cursor: pointer;
@@ -1092,9 +1092,9 @@ tbody tr:last-child td { border-bottom: none; }
   z-index: 10;
 }
 .ov-tab-refresh:hover {
-  background: rgba(255,204,0,0.15);
+  background: rgba(201,162,39,0.15);
   border-color: var(--yellow);
-  box-shadow: 0 0 8px rgba(255,204,0,0.15);
+  box-shadow: 0 0 8px rgba(201,162,39,0.15);
 }
 .ov-tab-refresh.spinning {
   pointer-events: none;
@@ -1121,16 +1121,53 @@ tbody tr:last-child td { border-bottom: none; }
   overflow: hidden;
 }
 .ov-ts-item { display:flex; flex-direction:column; gap:4px; flex:1; min-width:120px; }
-.ov-ts-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; white-space:nowrap; }
+.ov-ts-label { font-family:'IBM Plex Mono','Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; white-space:nowrap; }
 .ov-ts-val { font-size:22px; font-weight:700; color:#fff; white-space:nowrap; }
 .ov-ts-sep { width:1px; height:40px; background:var(--border); margin:0 20px; flex-shrink:0; }
 
 /* OVERVIEW PNL CHARTS ROW */
+/* OVERVIEW GLOBAL PERIOD BAR */
+.ov-global-period-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
+}
+.ov-global-period-label {
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.ov-global-period-tabs { display: flex; gap: 6px; margin-left: auto; }
+.ov-global-ptab {
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.ov-global-ptab:hover { color: var(--text); border-color: var(--muted); }
+.ov-global-ptab.active {
+  background: var(--green);
+  color: #000;
+  border-color: var(--green);
+  box-shadow: 0 0 12px rgba(79,178,134,0.25);
+}
 .ov-pnl-row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 16px;
-  margin-top: 20px;
+  margin-top: 8px;
 }
 @media (max-width: 1200px) { .ov-pnl-row { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 700px) { .ov-pnl-row { grid-template-columns: 1fr; } }
@@ -1197,33 +1234,33 @@ tbody tr:last-child td { border-bottom: none; }
   height: 7px;
   border-radius: 50%;
   background: var(--green);
-  box-shadow: 0 0 8px var(--green), 0 0 16px rgba(0,229,160,0.3);
+  box-shadow: 0 0 8px var(--green), 0 0 16px rgba(79,178,134,0.3);
   animation: pulse-live 2s infinite;
   flex-shrink: 0;
 }
 @keyframes pulse-live {
-  0%,100% { opacity: 1; box-shadow: 0 0 8px var(--green), 0 0 16px rgba(0,229,160,0.3); }
-  50% { opacity: 0.5; box-shadow: 0 0 4px var(--green), 0 0 8px rgba(0,229,160,0.15); }
+  0%,100% { opacity: 1; box-shadow: 0 0 8px var(--green), 0 0 16px rgba(79,178,134,0.3); }
+  50% { opacity: 0.5; box-shadow: 0 0 4px var(--green), 0 0 8px rgba(79,178,134,0.15); }
 }
 .onchain-title {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 11px;
   letter-spacing: 3px;
   color: var(--green);
   font-weight: 700;
 }
 .onchain-network {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 1px;
   color: var(--purple);
-  background: rgba(168,85,247,0.1);
+  background: rgba(139,126,200,0.1);
   padding: 2px 8px;
   border-radius: 2px;
-  border: 1px solid rgba(168,85,247,0.2);
+  border: 1px solid rgba(139,126,200,0.2);
 }
 .onchain-addr {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   letter-spacing: 0.5px;
@@ -1246,7 +1283,7 @@ tbody tr:last-child td { border-bottom: none; }
   grid-column: span 2;
 }
 .onchain-cell-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -1264,7 +1301,7 @@ tbody tr:last-child td { border-bottom: none; }
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
 }
@@ -1297,12 +1334,12 @@ tbody tr:last-child td { border-bottom: none; }
   align-items: center;
   gap: 8px;
   padding: 14px 24px;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 12px;
   letter-spacing: 2px;
   color: var(--green);
   border-bottom: 1px solid var(--border);
-  background: rgba(0,229,160,0.02);
+  background: rgba(79,178,134,0.02);
 }
 .onchain-activity-list {
   max-height: 460px;
@@ -1322,7 +1359,7 @@ tbody tr:last-child td { border-bottom: none; }
 .onchain-act-row:hover { background: rgba(255,255,255,0.02); }
 .onchain-act-row:last-child { border-bottom: none; }
 .onchain-act-latest {
-  background: rgba(0,229,160,0.03);
+  background: rgba(79,178,134,0.03);
   border-left: 2px solid var(--green);
 }
 .onchain-act-icon {
@@ -1332,7 +1369,7 @@ tbody tr:last-child td { border-bottom: none; }
   flex-shrink: 0;
 }
 .onchain-act-type {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -1348,14 +1385,14 @@ tbody tr:last-child td { border-bottom: none; }
   line-height: 1.3;
 }
 .onchain-act-val {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 13px;
   color: var(--blue);
   white-space: nowrap;
   flex-shrink: 0;
 }
 .onchain-act-time {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 12px;
   color: var(--muted);
   white-space: nowrap;
@@ -1363,6 +1400,48 @@ tbody tr:last-child td { border-bottom: none; }
   min-width: 55px;
   text-align: right;
 }
+
+/* LIVE ACTIVITY FILTER BUTTONS */
+.live-filter-group {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  align-items: center;
+}
+.live-filter-btn {
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  padding: 4px 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  text-transform: uppercase;
+  transition: all 0.15s;
+  opacity: 0.5;
+}
+.live-filter-btn:hover { opacity: 0.85; }
+.live-filter-btn:not(.active) { text-decoration: line-through; }
+.live-filter-btn.active { opacity: 1; }
+.live-filter-btn.buy.active {
+  border-color: var(--green);
+  color: var(--green);
+  background: rgba(79,178,134,0.10);
+}
+.live-filter-btn.sell.active {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(209,73,91,0.10);
+}
+.live-filter-btn.redeem.active {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: rgba(111,168,224,0.10);
+}
+.live-evt-count { margin-left: 12px; white-space: nowrap; }
 
 /* LIVE WALLET ROWS — table layout for perfect alignment */
 .live-table {
@@ -1376,7 +1455,7 @@ tbody tr:last-child td { border-bottom: none; }
 .live-table th {
   padding: 12px 18px;
   text-align: left;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -1417,13 +1496,13 @@ tbody tr:last-child td { border-bottom: none; }
   gap: 1px;
 }
 .live-wallet-name {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 1px;
 }
 .live-wallet-sub {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   display: flex;
@@ -1434,14 +1513,14 @@ tbody tr:last-child td { border-bottom: none; }
   color: var(--yellow);
 }
 .live-cash-tag {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 0.5px;
   display: block;
   margin-top: 2px;
 }
 .live-pos-tag {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   display: block;
   margin-top: 2px;
@@ -1460,7 +1539,7 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .live-summary-cell:last-child { border-right: none; }
 .live-summary-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 9px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -1474,7 +1553,7 @@ tbody tr:last-child td { border-bottom: none; }
   line-height: 1;
 }
 .live-summary-sub {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'IBM Plex Mono','IBM Plex Mono','Share Tech Mono',monospace;
   font-size: 10px;
   color: var(--muted);
   margin-top: 6px;
@@ -1489,6 +1568,181 @@ tbody tr:last-child td { border-bottom: none; }
   .live-summary-grid { grid-template-columns: repeat(2, 1fr); }
 }
 </style>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="v14-theme">
+/* ─── V14 · paleta sóbria (trading desk) ─── */
+:root {
+  --bg:#0b0c0e; --s1:#0e0f12; --s2:#121419;
+  --border:#1e2026; --border2:#262a32;
+  --green:#4fb286; --red:#d1495b; --blue:#6fa8e0; --yellow:#c9a227; --purple:#8b7ec8;
+  --text:#c9ccd3; --muted:#5d6270;
+  --w0:#c96a5a; --w1:#4fb286; --w2:#5b8ac9; --w3:#8b7ec8; --w4:#c96f9c;
+  --w5:#cf8b45; --w6:#4aa3ab; --w7:#8fa84a; --w8:#7d76c9; --w9:#c9a94a;
+}
+body { font-family:'IBM Plex Sans','Rajdhani',sans-serif; }
+body::before { content:none !important; }          /* sem scanlines */
+.glow { text-shadow:none !important; }
+.kpi-val, .pm-card-value, .pm-available-val, .ov-total, .ov-bval, .ts-val,
+.ov-ts-val, .live-summary-val, .onchain-cell-value, .pnl-card-value, td, th
+  { font-variant-numeric:tabular-nums; }
+.pm-card-value { color:#f2f3f5; }
+.logo-text { letter-spacing:3px; font-weight:600; }
+.onchain-panel::before { background:linear-gradient(90deg,#2fa37a,#3f5a75); }
+.onchain-live-dot { box-shadow:0 0 6px rgba(79,178,134,.5) !important; }
+
+/* ─── Seletor de layout ─── */
+.v14-switch { display:flex; gap:6px; align-items:center; margin-right:4px; }
+.v14-lay {
+  width:32px; height:24px; padding:3px; cursor:pointer; background:transparent;
+  border:1px solid var(--border2); border-radius:2px; display:grid; gap:2px;
+  grid-template-columns:1fr 1fr; transition:border-color .15s;
+}
+.v14-lay i { background:#4d525e; display:block; transition:background .15s; }
+.v14-lay:hover { border-color:var(--muted); }
+.v14-lay.active { border-color:var(--green); }
+.v14-lay.active i { background:var(--green); }
+.v14-hint { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:1.5px; color:var(--muted); }
+
+/* ═══ A · TRADING DESK (denso) ═══ */
+body[data-layout="a"] .content { max-width:100%; padding:16px 22px; }
+body[data-layout="a"] .kpi, body[data-layout="a"] .pm-card, body[data-layout="a"] .chart-card,
+body[data-layout="a"] .table-wrap, body[data-layout="a"] .pnl-chart-card,
+body[data-layout="a"] .onchain-panel, body[data-layout="a"] .ov-wallet-card,
+body[data-layout="a"] .trader-stats-banner, body[data-layout="a"] .ov-trader-banner { border-radius:2px; }
+body[data-layout="a"] .kpi { padding:12px 14px; }
+body[data-layout="a"] .kpi-val { font-size:21px; }
+body[data-layout="a"] .kpi-grid { gap:8px; margin-bottom:18px; }
+body[data-layout="a"] .two-col { gap:12px; margin-bottom:18px; }
+body[data-layout="a"] .portfolio-summary-row { gap:12px; margin-bottom:18px; }
+body[data-layout="a"] .pm-card, body[data-layout="a"] .pnl-chart-card { padding:16px 18px; }
+body[data-layout="a"] .pm-card-value { font-size:42px; }
+body[data-layout="a"] .table-wrap { margin-bottom:18px; }
+body[data-layout="a"] th { padding:7px 12px; }
+body[data-layout="a"] td { padding:7px 12px; font-size:12.5px; }
+body[data-layout="a"] .live-table td { padding:11px 14px; font-size:13.5px; }
+body[data-layout="a"] .wallet-panel[id="panel-live"] .live-table td { font-size:14px; padding:12px 16px; }
+body[data-layout="a"] .live-summary-cell { padding:14px 18px; }
+body[data-layout="a"] .onchain-act-row { padding:8px 20px; }
+body[data-layout="a"] .wallet-tabs { padding:12px 22px 0; margin-bottom:18px; }
+body[data-layout="a"] .wtab { padding:9px 16px; }
+
+/* ═══ B · EDITORIAL (respiro) ═══ */
+body[data-layout="b"] .content { max-width:1500px; padding:44px 48px; }
+body[data-layout="b"] .wallet-tabs { padding:26px 48px 0; margin-bottom:40px; }
+body[data-layout="b"] .kpi { background:transparent; border:none; border-left:2px solid var(--kc,var(--green)); border-radius:0; padding:14px 0 14px 18px; }
+body[data-layout="b"] .kpi::before { display:none; }
+body[data-layout="b"] .kpi-val { font-size:30px; }
+body[data-layout="b"] .kpi-grid { gap:28px; margin-bottom:44px; }
+body[data-layout="b"] .pm-card, body[data-layout="b"] .pnl-chart-card { padding:34px 36px; border-color:transparent; }
+body[data-layout="b"] .pm-card-value { font-size:62px; letter-spacing:-3px; }
+body[data-layout="b"] .pm-available-val { font-size:36px; }
+body[data-layout="b"] .portfolio-summary-row { gap:28px; margin-bottom:44px; }
+body[data-layout="b"] .two-col { gap:32px; margin-bottom:44px; }
+body[data-layout="b"] .table-wrap, body[data-layout="b"] .chart-card { border-color:transparent; background:var(--s1); margin-bottom:44px; }
+body[data-layout="b"] table { font-size:14px; }
+body[data-layout="b"] td { padding:14px 18px; }
+body[data-layout="b"] th { padding:12px 18px; }
+body[data-layout="b"] .ov-wallet-card { padding:24px 26px; border-color:transparent; border-top-width:2px; }
+body[data-layout="b"] .ov-total { font-size:34px; }
+body[data-layout="b"] .overview-wallet-row, body[data-layout="b"] .ov-pnl-row { gap:24px; }
+body[data-layout="b"] .live-summary-cell { padding:28px 30px; }
+body[data-layout="b"] .live-summary-val { font-size:30px; }
+body[data-layout="b"] .sec-title { margin-bottom:18px; }
+
+/* ═══ C · COCKPIT (sidebar no lugar das abas) ═══ */
+body[data-layout="c"] header { padding-left:252px; }
+body[data-layout="c"] .wallet-tabs {
+  position:fixed; left:0; top:0; bottom:0; width:236px; z-index:90;
+  flex-direction:column; align-items:stretch; gap:0;
+  padding:74px 0 20px; margin:0;
+  background:var(--s1); border-right:1px solid var(--border); border-bottom:none;
+  overflow-y:auto;
+}
+body[data-layout="c"] .wtab {
+  padding:11px 16px; border-bottom:1px solid var(--border);
+  border-left:2px solid transparent; font-size:12px;
+}
+body[data-layout="c"] .wtab.active { border-left-color:var(--wc); border-bottom-color:var(--border); background:rgba(255,255,255,.02); }
+body[data-layout="c"] .wtab.combined { margin-left:0; margin-top:auto; border-left:2px solid transparent; }
+body[data-layout="c"] .ov-tab-refresh { position:static; transform:none; margin-top:8px; display:none; }
+body[data-layout="c"] .wtab.active .ov-tab-refresh { display:block; }
+body[data-layout="c"] .content, body[data-layout="c"] .content:has(#panel-live.active) {
+  margin-left:236px; max-width:none; padding:24px 30px;
+}
+body[data-layout="c"] .pm-card-value { font-size:46px; }
+@media (max-width:1100px) {
+  body[data-layout="c"] header { padding-left:32px; }
+  body[data-layout="c"] .wallet-tabs { position:static; width:auto; flex-direction:row; padding:20px 32px 0; border-right:none; border-bottom:1px solid var(--border); }
+  body[data-layout="c"] .content { margin-left:0; }
+}
+</style>
+<style id="v15-improve">
+/* ── Faixa consolidada fixa ── */
+.mw-gbar{position:sticky;top:64px;z-index:99;display:flex;align-items:stretch;background:var(--s1);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.mw-gbar::-webkit-scrollbar{height:3px}
+.mw-gitem{display:flex;flex-direction:column;justify-content:flex-start;gap:6px;padding:12px 22px 11px;border-right:1px solid var(--border);min-width:148px;white-space:nowrap}
+.mw-gprimary{min-width:236px}
+.mw-glabel{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.mw-gval{font-size:19px;font-weight:600;color:#f2f3f5;letter-spacing:-.4px;font-variant-numeric:tabular-nums;line-height:1;height:28px;display:flex;align-items:flex-end}
+.mw-gprimary .mw-gval{font-size:27px}
+.mw-gitem>.mw-gval:last-child::after{content:"";display:block}
+.mw-gitem:not(.mw-gstatus)>.mw-gval:last-child{margin-bottom:11px}
+.mw-gsub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;min-height:11px}
+.mw-gstatus{margin-left:auto;border-right:none;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;align-items:flex-end}
+.mw-warn{color:var(--yellow);border:1px solid rgba(201,162,39,.35);padding:4px 9px;border-radius:2px;font-size:9.5px;letter-spacing:1px}
+.mw-flash{animation:mwFlash 1.4s ease}
+@keyframes mwFlash{0%{background:rgba(79,178,134,.16)}100%{background:transparent}}
+body[data-layout="c"] .mw-gbar{margin-left:236px}
+@media(max-width:1100px){body[data-layout="c"] .mw-gbar{margin-left:0}}
+/* ── Abas com valor + PnL do dia ── */
+body:not([data-layout="c"]) .wallet-tabs{flex-wrap:wrap}
+.mw-tabval{display:flex;flex-direction:column;align-items:flex-end;gap:2px;margin-left:8px;line-height:1}
+.mw-tabval b{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#e6e7ea;letter-spacing:0}
+.mw-tabval em{font-family:'IBM Plex Mono',monospace;font-size:9px;font-style:normal;letter-spacing:0}
+body[data-layout="c"] .mw-tabval{margin-left:auto}
+/* ── Tabelas mais legíveis ── */
+table td,table th{font-variant-numeric:tabular-nums}
+.live-table th:nth-child(n+2),.live-table td:nth-child(n+2){text-align:right}
+.live-table tbody tr:nth-child(even){background:rgba(255,255,255,.014)}
+.live-table tbody tr:hover{background:rgba(255,255,255,.045)}
+.mw-bar{display:block;height:3px;margin-top:5px;margin-left:auto;background:var(--border2);width:70px;border-radius:2px;overflow:hidden}
+.mw-bar i{display:block;height:100%;border-radius:2px}
+.mw-na{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.5px}
+.mw-spark{display:block;margin-left:auto}
+/* ── Toast como painel lateral (não bloqueia a tela) ── */
+.trade-toast-overlay{align-items:flex-start!important;justify-content:flex-end!important;padding:104px 16px 16px;background:transparent!important;pointer-events:none!important}
+.trade-toast{width:min(380px,92vw);max-height:70vh;pointer-events:auto;box-shadow:0 14px 44px rgba(0,0,0,.55)}
+.trade-toast-entries{max-height:calc(70vh - 40px)}
+.trade-toast-img{height:88px}
+.trade-toast-market{font-size:14px}
+</style>
+
+<style id="v16-chart">
+.pnl-chart-area{min-height:150px;position:relative}
+.mw-chart{display:block;width:100%;overflow:visible}
+.mw-tip{position:absolute;pointer-events:none;opacity:0;transition:opacity .12s;background:#15171c;border:1px solid var(--border2);border-radius:3px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#e6e7ea;white-space:nowrap;z-index:20;transform:translate(-50%,-115%);box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.mw-tip b{display:block;font-size:12.5px;font-weight:600;margin-bottom:2px}
+.mw-tip span{color:var(--muted);font-size:9.5px;letter-spacing:.5px}
+body[data-layout="b"] .pnl-chart-area{min-height:210px}
+</style>
+
+<style id="v16-meta">
+.pm-card{display:flex;flex-direction:column}
+.pm-meta-row{margin-top:auto;padding-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border)}
+.pm-meta{background:var(--s1);padding:14px 18px 2px 0}
+.pm-meta:not(:first-child){padding-left:18px}
+.pm-meta-label{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.pm-meta-val{font-size:21px;font-weight:600;color:#f2f3f5;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1}
+.pm-meta-val.pos-green{color:var(--green)}
+.pm-meta-val.pos-red{color:var(--red)}
+.pm-meta-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:6px;letter-spacing:.5px}
+.pm-card-available{margin-top:16px}
+body[data-layout="b"] .pm-meta-val{font-size:24px}
+@media(max-width:820px){.pm-meta-row{grid-template-columns:1fr 1fr}}
+</style>
+<style id="v16-notabval">.mw-tabval{display:none!important}</style>
 </head>
 <body>
 
@@ -1509,13 +1763,13 @@ tbody tr:last-child td { border-bottom: none; }
 <header>
   <div class="logo-mark">
     <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="18,1 35,9.5 35,26.5 18,35 1,26.5 1,9.5" fill="#00e5a0" opacity="0.15" stroke="#00e5a0" stroke-width="1.2"/>
-      <polygon points="18,6 30,12.5 30,23.5 18,30 6,23.5 6,12.5" fill="#00e5a0" opacity="0.08"/>
-      <text x="18" y="23" text-anchor="middle" font-family="Rajdhani,sans-serif" font-weight="700" font-size="17" fill="#00e5a0" letter-spacing="0">M</text>
+      <polygon points="18,1 35,9.5 35,26.5 18,35 1,26.5 1,9.5" fill="#4fb286" opacity="0.15" stroke="#4fb286" stroke-width="1.2"/>
+      <polygon points="18,6 30,12.5 30,23.5 18,30 6,23.5 6,12.5" fill="#4fb286" opacity="0.08"/>
+      <text x="18" y="23" text-anchor="middle" font-family="Rajdhani,sans-serif" font-weight="700" font-size="17" fill="#4fb286" letter-spacing="0">M</text>
     </svg>
     <div class="logo-text">MOND<span>WATCH</span></div>
   </div>
-  <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px">
+  <div style="font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px">
     MULTI-WALLET MONITOR · POLYMARKET
   </div>
   <div class="header-right">
@@ -1523,7 +1777,6 @@ tbody tr:last-child td { border-bottom: none; }
     <span class="last-update" id="lastUpdate">—</span>
   </div>
 </header>
-
 <div class="wallet-tabs" id="walletTabs">
   <div class="wtab active" style="--wc:var(--green)" data-wallet="live" onclick="showWallet('live')">
     <span class="dot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>
@@ -1579,7 +1832,7 @@ tbody tr:last-child td { border-bottom: none; }
     <span class="wlabel" id="wlabel-9">W9</span>
     <span class="edit-label" onclick="event.stopPropagation();renameWallet(9)" title="Renomear">✎</span>
   </div>
-  <div class="wtab" style="--wc:#ffcc00; position:relative;" data-wallet="overview" onclick="showWallet('overview')">
+  <div class="wtab" style="--wc:#c9a227; position:relative;" data-wallet="overview" onclick="showWallet('overview')">
     <span class="dot" style="background:var(--yellow)"></span>
     <span>OVERVIEW</span>
 
@@ -1886,9 +2139,9 @@ function renderWallet(idx) {
   // ─ Address bar ─
   html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <div style="width:8px;height:8px;border-radius:50%;background:${w.color}"></div>
-    <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:${w.color}">${w.addr}</span>
+    <span style="font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:12px;color:${w.color}">${w.addr}</span>
     <a href="https://polymarket.com/profile/${w.addr}" target="_blank"
-       style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:3px 8px;border-radius:2px;letter-spacing:1px"
+       style="font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:3px 8px;border-radius:2px;letter-spacing:1px"
        onmouseover="this.style.borderColor='${w.color}'" onmouseout="this.style.borderColor='var(--border)'">
       ↗ POLYMARKET
     </a>
@@ -1907,7 +2160,7 @@ function renderWallet(idx) {
         ${pnlSign(realizedPnl)}${fmt$(realizedPnl)} PnL realizado${lbData ? ' · <span style="color:var(--green);font-size:9px">⬡ leaderboard</span>' : ''}
       </div>
       <!-- Breakdown: positions + cash = total -->
-      <div style="margin-top:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:13px">
+      <div style="margin-top:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:13px">
         <span style="color:var(--muted)">Posições</span>
         <span style="color:#fff;font-weight:700">${fmt$(positionsValue)}</span>
         <span style="color:var(--muted)">+</span>
@@ -2072,7 +2325,7 @@ function drawPieChart(idx, positions) {
   const total = top.reduce((s,p) => s + (parseFloat(p.currentValue)||0), 0);
   if (total <= 0) { ctx.fillStyle = '#555'; ctx.font = '12px Share Tech Mono'; ctx.fillText('Sem valor', 10, 20); return; }
 
-  const COLORS = ['#00e5a0','#4d9fff','#a855f7','#ffcc00','#ff3c5a','#ff9f1c','#00b4d8','#80ed99'];
+  const COLORS = ['#4fb286','#6fa8e0','#8b7ec8','#c9a227','#d1495b','#ff9f1c','#00b4d8','#80ed99'];
   const cx = H / 2, cy = H / 2, r = H * 0.38;
   let angle = -Math.PI / 2;
 
@@ -2170,7 +2423,7 @@ function drawBarChart(idx, positions) {
     const x = PAD.left + i * (cW / top.length) + (cW / top.length - barW) / 2;
     const barH = (Math.abs(pnl) / maxAbs) * (cH / 2 - 4);
     const y = pnl >= 0 ? midY - barH : midY;
-    ctx.fillStyle = pnl >= 0 ? 'rgba(0,229,160,0.8)' : 'rgba(255,60,90,0.8)';
+    ctx.fillStyle = pnl >= 0 ? 'rgba(79,178,134,0.8)' : 'rgba(209,73,91,0.8)';
     ctx.fillRect(x, y, barW, barH);
 
     ctx.fillStyle = '#555';
@@ -2229,8 +2482,8 @@ function drawPnlSvgChart(idx, period) {
 
   const finalPnl = ys[ys.length - 1];
   const isPos = finalPnl >= 0;
-  const lineColor = isPos ? '#00e5a0' : '#ff3c5a';
-  const fillColor = isPos ? 'rgba(0,229,160,0.12)' : 'rgba(255,60,90,0.12)';
+  const lineColor = isPos ? '#4fb286' : '#d1495b';
+  const fillColor = isPos ? 'rgba(79,178,134,0.12)' : 'rgba(209,73,91,0.12)';
 
   const coords = series.map((p, i) =>
     `${i === 0 ? 'M' : 'L'} ${toSX(p.t).toFixed(1)} ${toSY(p.p).toFixed(1)}`
@@ -2252,7 +2505,7 @@ function drawPnlSvgChart(idx, period) {
   grad.setAttribute('x1', '0%'); grad.setAttribute('x2', '100%');
   grad.setAttribute('y1', '0%'); grad.setAttribute('y2', '0%');
   const s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-  s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#a855f7');
+  s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#8b7ec8');
   const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
   s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', lineColor);
   grad.appendChild(s1); grad.appendChild(s2);
@@ -2375,8 +2628,8 @@ function drawConsolidatedSvgChart(period) {
 
   const finalPnl = ys[ys.length - 1];
   const isPos = finalPnl >= 0;
-  const lineColor = isPos ? '#00e5a0' : '#ff3c5a';
-  const fillColor = isPos ? 'rgba(0,229,160,0.12)' : 'rgba(255,60,90,0.12)';
+  const lineColor = isPos ? '#4fb286' : '#d1495b';
+  const fillColor = isPos ? 'rgba(79,178,134,0.12)' : 'rgba(209,73,91,0.12)';
 
   const coords = series.map((p, i) =>
     `${i === 0 ? 'M' : 'L'} ${toSX(p.t).toFixed(1)} ${toSY(p.p).toFixed(1)}`
@@ -2398,7 +2651,7 @@ function drawConsolidatedSvgChart(period) {
   grad.setAttribute('x1', '0%'); grad.setAttribute('x2', '100%');
   grad.setAttribute('y1', '0%'); grad.setAttribute('y2', '0%');
   const s1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-  s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#a855f7');
+  s1.setAttribute('offset', '0%'); s1.setAttribute('stop-color', '#8b7ec8');
   const s2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
   s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', lineColor);
   grad.appendChild(s1); grad.appendChild(s2);
@@ -2515,9 +2768,9 @@ function renderOverview() {
       <div class="ov-w-header">
         <div>
           <div class="ov-w-label ov-hideable-name" style="color:${w.color}">${name}</div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px">${w.short} · ${rank}</div>
+          <div style="font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px">${w.short} · ${rank}</div>
         </div>
-        <a href="https://polymarket.com/profile/${w.addr}" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:2px 6px;border-radius:2px">↗</a>
+        <a href="https://polymarket.com/profile/${w.addr}" target="_blank" style="font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:9px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:2px 6px;border-radius:2px">↗</a>
       </div>
 
       <div class="ov-total ov-hideable-num">${fmt$(total)}</div>
@@ -2536,7 +2789,7 @@ function renderOverview() {
 
       <div class="ov-divider"></div>
 
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;letter-spacing:1px">TOP POSIÇÕES</div>
+      <div style="font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px;letter-spacing:1px">TOP POSIÇÕES</div>
       ${positions.slice(0,3).map(p => {
         const cv = parseFloat(p.currentValue)||0;
         const cp = parseFloat(p.cashPnl)||0;
@@ -2557,6 +2810,12 @@ function renderOverview() {
   html += `</div>`;
 
   // ── Row 2: PnL charts side by side ─────────────────────────────
+  html += `<div class="ov-global-period-bar">
+    <span class="ov-global-period-label">◱ Período dos Gráficos · Todas as Wallets</span>
+    <div class="ov-global-period-tabs">
+      ${['1D','1W','1M','ALL'].map(p=>`<button class="ov-global-ptab${ovGlobalPeriod===p?' active':''}" onclick="setAllOvPeriod('${p}')">${p}</button>`).join('')}
+    </div>
+  </div>`;
   html += `<div class="ov-pnl-row">`;
   WALLETS.forEach((w, i) => {
     const d = walletData[i];
@@ -2570,13 +2829,10 @@ function renderOverview() {
             <div class="pnl-card-value ${pnlClass(pnl)}" id="ov-pnl-val-${i}">${pnlSign(pnl)}${fmt$(pnl)}</div>
           </div>
           <div class="pnl-card-period" id="ov-pnl-lbl-${i}">Profit / Loss · All-Time</div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${w.color};margin-top:4px">${w.label}</div>
+          <div style="font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:10px;color:${w.color};margin-top:4px">${w.label}</div>
         </div>
         <div class="pnl-period-tabs">
-          <button class="pnl-ptab" onclick="setOvPeriod(this,'1D',${i})">1D</button>
-          <button class="pnl-ptab" onclick="setOvPeriod(this,'1W',${i})">1W</button>
-          <button class="pnl-ptab" onclick="setOvPeriod(this,'1M',${i})">1M</button>
-          <button class="pnl-ptab active" onclick="setOvPeriod(this,'ALL',${i})">ALL</button>
+          ${['1D','1W','1M','ALL'].map(p=>`<button class="pnl-ptab${ovGlobalPeriod===p?' active':''}" onclick="setOvPeriod(this,'${p}',${i})">${p}</button>`).join('')}
         </div>
       </div>
       <div class="pnl-chart-area">
@@ -2637,7 +2893,7 @@ function renderOverview() {
 
   // Draw all charts
   setTimeout(() => {
-    WALLETS.forEach((w, i) => drawOvChart(i, 'ALL'));
+    WALLETS.forEach((w, i) => drawOvChart(i, ovGlobalPeriod));
   }, 60);
 }
 
@@ -2668,8 +2924,8 @@ function drawOvChart(idx, period) {
 
   const finalPnl=ys[ys.length-1];
   const isPos=finalPnl>=0;
-  const lc=isPos?'#00e5a0':'#ff3c5a';
-  const fc=isPos?'rgba(0,229,160,0.12)':'rgba(255,60,90,0.12)';
+  const lc=isPos?'#4fb286':'#d1495b';
+  const fc=isPos?'rgba(79,178,134,0.12)':'rgba(209,73,91,0.12)';
   const coords=series.map((p,i)=>`${i===0?'M':'L'} ${toSX(p.t).toFixed(1)} ${toSY(p.p).toFixed(1)}`).join(' ');
 
   const fX=toSX(series[0].t).toFixed(1), lX=toSX(series[series.length-1].t).toFixed(1);
@@ -2683,7 +2939,7 @@ function drawOvChart(idx, period) {
   g.setAttribute('id',gId); g.setAttribute('x1','0%'); g.setAttribute('x2','100%');
   g.setAttribute('y1','0%'); g.setAttribute('y2','0%');
   const s1=document.createElementNS('http://www.w3.org/2000/svg','stop');
-  s1.setAttribute('offset','0%'); s1.setAttribute('stop-color','#a855f7');
+  s1.setAttribute('offset','0%'); s1.setAttribute('stop-color','#8b7ec8');
   const s2=document.createElementNS('http://www.w3.org/2000/svg','stop');
   s2.setAttribute('offset','100%'); s2.setAttribute('stop-color',lc);
   g.appendChild(s1); g.appendChild(s2); defs.appendChild(g); svg.appendChild(defs);
@@ -2714,6 +2970,23 @@ function drawOvChart(idx, period) {
   }
 }
 
+let ovGlobalPeriod = 'ALL';
+function setAllOvPeriod(period) {
+  ovGlobalPeriod = period;
+  document.querySelectorAll('.ov-global-ptab').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === period);
+  });
+  WALLETS.forEach((w, i) => {
+    const svg = document.getElementById(`ov-svg-${i}`);
+    const card = svg ? svg.closest('.pnl-chart-card') : null;
+    if (card) {
+      card.querySelectorAll('.pnl-ptab').forEach(b => {
+        b.classList.toggle('active', b.textContent.trim() === period);
+      });
+    }
+    drawOvChart(i, period);
+  });
+}
 function setOvPeriod(btn, period, idx) {
   btn.closest('.pnl-period-tabs').querySelectorAll('.pnl-ptab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -2783,16 +3056,23 @@ function renderLive() {
       <div class="pm-card-sub ${grandPnl >= 0 ? 'pos' : 'neg'}">
         ${pnlSign(grandPnl)}${fmt$(grandPnl)} PnL realizado · <span style="color:var(--green);font-size:9px">⬡ todas as wallets</span>
       </div>
-      <!-- Breakdown: posições + cash = total -->
-      <div style="margin-top:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:13px">
-        <span style="color:var(--muted)">Posições</span>
-        <span style="color:#fff;font-weight:700">${fmt$(grandPos)}</span>
-        <span style="color:var(--muted)">+</span>
-        <span style="color:var(--muted)">Cash</span>
-        <span style="color:var(--blue);font-weight:700">${fmt$(grandCash)}</span>
-        <span style="color:${consCashSrc==='on-chain'?'var(--green)':'var(--yellow)'};font-size:9px;letter-spacing:1px">${consCashSrc==='on-chain'?'⬡ on-chain':'~ api'}</span>
-        <span style="color:var(--muted)">=</span>
-        <span style="color:#fff;font-weight:700">${fmt$(grandTotal)}</span>
+      <!-- Rodapé de métricas -->
+      <div class="pm-meta-row">
+        <div class="pm-meta">
+          <div class="pm-meta-label">Em posições</div>
+          <div class="pm-meta-val">${fmt$(grandPos)}</div>
+          <div class="pm-meta-sub">${totalOpenPos} abertas · ${grandTotal > 0 ? (grandPos/grandTotal*100).toFixed(0) : 0}% exposto</div>
+        </div>
+        <div class="pm-meta">
+          <div class="pm-meta-label">PnL total</div>
+          <div class="pm-meta-val ${pnlClass(grandPnl)}">${pnlSign(grandPnl)}${fmt$(grandPnl)}</div>
+          <div class="pm-meta-sub">all-time</div>
+        </div>
+        <div class="pm-meta">
+          <div class="pm-meta-label">Volume total</div>
+          <div class="pm-meta-val">${fmt$(grandVol)}</div>
+          <div class="pm-meta-sub">all-time${pastWallets.length > 0 ? ' + '+pastWallets.length+' inativas' : ''}</div>
+        </div>
       </div>
       ${grandCash > 0 ? `
       <div class="pm-card-available">
@@ -2833,36 +3113,7 @@ function renderLive() {
         <span class="onchain-live-dot"></span>
         <span class="onchain-title">MULTI-WALLET · ON-CHAIN LIVE</span>
         <span class="onchain-network">⬡ POLYGON</span>
-        <span style="margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${WALLETS.length} wallets</span>
-      </div>
-    </div>
-
-    <!-- Summary cards -->
-    <div class="live-summary-grid">
-      <div class="live-summary-cell">
-        <div class="live-summary-label">Portfolio Total</div>
-        <div class="live-summary-val">${fmt$(grandTotal)}</div>
-        <div class="live-summary-sub">posições + cash</div>
-      </div>
-      <div class="live-summary-cell">
-        <div class="live-summary-label">Cash Disponível</div>
-        <div class="live-summary-val" style="color:var(--blue)">${fmt$(grandCash)}</div>
-        <div class="live-summary-sub">para trade</div>
-      </div>
-      <div class="live-summary-cell">
-        <div class="live-summary-label">Em Posições</div>
-        <div class="live-summary-val">${fmt$(grandPos)}</div>
-        <div class="live-summary-sub">${totalOpenPos} abertas</div>
-      </div>
-      <div class="live-summary-cell">
-        <div class="live-summary-label">PnL Total</div>
-        <div class="live-summary-val ${pnlClass(grandPnl)}">${pnlSign(grandPnl)}${fmt$(grandPnl)}</div>
-        <div class="live-summary-sub">all-time</div>
-      </div>
-      <div class="live-summary-cell">
-        <div class="live-summary-label">Volume Total</div>
-        <div class="live-summary-val">${fmt$(grandVol)}</div>
-        <div class="live-summary-sub">all-time${pastWallets.length > 0 ? ' + '+pastWallets.length+' inativas' : ''}</div>
+        <span style="margin-left:auto;font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:10px;color:var(--muted)">${WALLETS.length} wallets</span>
       </div>
     </div>
 
@@ -2874,14 +3125,17 @@ function renderLive() {
         <th>Portfolio</th>
         <th>Disponível</th>
         <th>Posições</th>
-        <th>PnL</th>
+        <th>PnL 24h</th>
+        <th>PnL all-time</th>
         <th>Volume</th>
+        <th>7d</th>
       </tr></thead>
       <tbody>`;
 
+  const _maxPnl = Math.max.apply(null, infos.map(x => Math.abs((x && x.pnl) || 0)).concat([1]));
   infos.forEach((info, i) => {
     if (!info) {
-      html += `<tr><td colspan="6" style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px">
+      html += `<tr><td colspan="8" style="color:var(--muted);font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:11px">
         <span style="color:${WALLETS[i].color}">${WALLETS[i].label}</span> · carregando…
       </td></tr>`;
       return;
@@ -2903,15 +3157,17 @@ function renderLive() {
       </td>
       <td style="font-weight:700;color:#fff;font-size:17px">${fmt$(total)}</td>
       <td>
-        <span style="font-weight:700;color:var(--blue)">${fmt$(cash)}</span>
-        <span class="live-cash-tag" style="color:${cashSrc==='on-chain'?'var(--green)':'var(--yellow)'}">${cashSrc==='on-chain'?'⬡ verified':'~ est'}</span>
+        ${cashSrc === 'none' ? '<span class="mw-na">indisponível</span>' : `<span style="font-weight:700;color:var(--blue)">${fmt$(cash)}</span>`}
+        <span class="live-cash-tag" style="color:${cashSrc==='on-chain'?'var(--green)':'var(--yellow)'}">${cashSrc==='on-chain'?'⬡ on-chain':(cashSrc==='api'?'~ estimado':'sem dado on-chain')}</span>
       </td>
       <td>
         <span style="font-weight:700">${fmt$(posVal)}</span>
         <span class="live-pos-tag" style="color:${w.color}">${posCount} abertas</span>
       </td>
-      <td class="${pnlClass(pnl)}" style="font-weight:700">${pnlSign(pnl)}${fmt$(pnl)}</td>
+      <td>${mwDayCell(i)}</td>
+      <td class="${pnlClass(pnl)}" style="font-weight:700">${pnlSign(pnl)}${fmt$(pnl)}${mwPnlBar(pnl, _maxPnl)}</td>
       <td style="font-weight:500">${vol > 0 ? fmt$(vol) : '—'}</td>
+      <td>${mwSpark(i)}</td>
     </tr>`;
   });
 
@@ -2920,10 +3176,7 @@ function renderLive() {
   // ── Activity feed (all wallets merged and grouped) ──
   const rawActivity = infos.flatMap((info, i) =>
     (info?.activity || []).slice(0, 8).map(a => ({ ...a, _wi: i }))
-  ).filter(a => {
-    const type = (a.type || '').toUpperCase();
-    return !type.includes('REDEEM');
-  }).sort((a, b) => {
+  ).sort((a, b) => {
     const tA = new Date(a.timestamp || a.createdAt || 0).getTime();
     const tB = new Date(b.timestamp || b.createdAt || 0).getTime();
     return tB - tA;
@@ -2935,8 +3188,10 @@ function renderLive() {
     const typeStr = (a.type || '').toUpperCase();
     const sideStr = (a.side || '').toUpperCase();
     const actionApi = (a.action || '').toUpperCase();
-    const isSell = typeStr === 'SELL' || typeStr.includes('SELL') || typeStr.includes('VENDA') || sideStr === 'SELL' || actionApi === 'SELL' || parseFloat(a.size || a.amount) < 0 || price >= 0.9985;
-    const actionStr = isSell ? 'SELL' : 'BUY';
+    const isRedeem = typeStr.includes('REDEEM') || sideStr === 'REDEEM' || actionApi === 'REDEEM';
+    const isSell = !isRedeem && (typeStr === 'SELL' || typeStr.includes('SELL') || typeStr.includes('VENDA') || sideStr === 'SELL' || actionApi === 'SELL' || parseFloat(a.size || a.amount) < 0 || price >= 0.9985);
+    const gType = isRedeem ? 'redeem' : (isSell ? 'sell' : 'buy');
+    const actionStr = gType.toUpperCase();
     const outcomeStr = (a.outcome || '').toUpperCase();
     const marketTitle = a.title || a.market || '—';
     const marketKey = marketTitle + '|' + outcomeStr + '|' + actionStr;
@@ -2956,6 +3211,7 @@ function renderLive() {
         key: marketKey,
         time: time,
         isSell: isSell,
+        gType: gType,
         outcome: outcomeStr,
         marketTitle: marketTitle,
         typeStr: typeStr,
@@ -2975,7 +3231,12 @@ function renderLive() {
       <div class="onchain-activity-header">
         <span class="onchain-live-dot" style="width:5px;height:5px"></span>
         <span>ATIVIDADE RECENTE · TODAS AS WALLETS</span>
-        <span style="color:var(--muted);font-size:11px;margin-left:auto">${displayActivity.length} eventos</span>
+        <div class="live-filter-group">
+          <button type="button" class="live-filter-btn buy" data-filter="buy" onclick="toggleLiveFilter('buy')">BUY</button>
+          <button type="button" class="live-filter-btn sell" data-filter="sell" onclick="toggleLiveFilter('sell')">SELL</button>
+          <button type="button" class="live-filter-btn redeem" data-filter="redeem" onclick="toggleLiveFilter('redeem')">REDEEM</button>
+        </div>
+        <span class="live-evt-count" style="color:var(--muted);font-size:11px">${displayActivity.length} eventos</span>
       </div>
       <div class="onchain-activity-list">`;
 
@@ -2984,7 +3245,8 @@ function renderLive() {
   } else {
     displayActivity.forEach((g, gi) => {
       let icon, tagColor, badgeClass, badgeText;
-      if (g.isSell) { icon = '▼'; tagColor = 'var(--red)'; badgeClass = 'sell'; badgeText = 'SELL'; }
+      if (g.gType === 'redeem') { icon = '●'; tagColor = 'var(--blue)'; badgeClass = 'redeem'; badgeText = 'REDEEM'; }
+      else if (g.isSell) { icon = '▼'; tagColor = 'var(--red)'; badgeClass = 'sell'; badgeText = 'SELL'; }
       else          { icon = '▲'; tagColor = 'var(--green)'; badgeClass = 'buy'; badgeText = 'BUY'; }
       
       const isYes = g.outcome === 'YES';
@@ -2995,11 +3257,11 @@ function renderLive() {
       g.items.forEach(item => {
          const ww = WALLETS[item._wi];
          if(ww) {
-           walletsHtml += `<span title="${ww.label}" style="display:inline-block;border-radius:50px;background:${ww.color};color:#000;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:800;padding:4px 8px;margin-left:4px;border:1px solid rgba(255,255,255,0.3);line-height:1;vertical-align:middle;">${ww.label}</span>`;
+           walletsHtml += `<span title="${ww.label}" style="display:inline-block;border-radius:50px;background:${ww.color};color:#000;font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:10px;font-weight:800;padding:4px 8px;margin-left:4px;border:1px solid rgba(255,255,255,0.3);line-height:1;vertical-align:middle;">${ww.label}</span>`;
          }
       });
 
-      html += `<div class="onchain-act-row${gi === 0 ? ' onchain-act-latest' : ''}">
+      html += `<div class="onchain-act-row${gi === 0 ? ' onchain-act-latest' : ''}" data-acttype="${g.gType}">
         <div class="onchain-act-icon" style="color:${tagColor};margin-left:8px">${icon}</div>
         <div class="onchain-act-type"><span class="trade-toast-badge ${badgeClass}">${badgeText}</span></div>
         ${g.outcome ? `<span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}" style="font-size:10px;padding:2px 6px">${g.outcome}</span>` : ''}
@@ -3015,8 +3277,34 @@ function renderLive() {
 
   el.innerHTML = html;
 
+  applyLiveFilter();
+
   // Desenha o gráfico consolidado (default 1D) após o DOM estar pronto
   setTimeout(() => drawConsolidatedSvgChart('1D'), 50);
+}
+
+// ─── Filtro de tipo da atividade LIVE (BUY / SELL / REDEEM) ──────────
+let liveFilter = { buy: true, sell: true, redeem: true };
+function applyLiveFilter() {
+  const rows = document.querySelectorAll('.onchain-act-row[data-acttype]');
+  let visible = 0;
+  rows.forEach(r => {
+    const t = r.getAttribute('data-acttype');
+    if (liveFilter[t]) { r.style.display = ''; visible++; }
+    else { r.style.display = 'none'; }
+  });
+  ['buy','sell','redeem'].forEach(t => {
+    document.querySelectorAll('.live-filter-btn[data-filter="' + t + '"]').forEach(b => {
+      b.classList.toggle('active', !!liveFilter[t]);
+    });
+  });
+  const cnt = document.querySelector('.live-evt-count');
+  if (cnt) cnt.textContent = visible + ' eventos';
+}
+function toggleLiveFilter(type) {
+  if (!(type in liveFilter)) return;
+  liveFilter[type] = !liveFilter[type];
+  applyLiveFilter();
 }
 
 // ─── Combined view ────────────────────────────────────────────────
@@ -3138,7 +3426,7 @@ function renderCombined() {
     const avgPrice  = parseFloat(p.avgPrice) || 0;
     const currVal   = parseFloat(p.currentValue) || 0;
     html += `<tr>
-      <td><span style="color:${w.color};font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700">${w.label}</span></td>
+      <td><span style="color:${w.color};font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:11px;font-weight:700">${w.label}</span></td>
       <td><div class="market-name">${p.title || p.market || p.conditionId?.slice(0,20)+'...' || '—'}</div></td>
       <td><span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}">${outcome||'—'}</span></td>
       <td><span class="price-badge">${avgPrice>0?(avgPrice*100).toFixed(1)+'¢':'—'}</span></td>
@@ -3231,6 +3519,8 @@ async function loadAll() {
 
   document.getElementById('lastUpdate').textContent =
     'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+
+  try { mwUpdateGlobals(); } catch(e) { console.warn('mwUpdateGlobals', e); }
 
   // Check for new trades and show toast notifications
   checkForNewTrades();
@@ -3750,6 +4040,8 @@ async function silentRefresh() {
     document.getElementById('lastUpdate').textContent =
       'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
 
+  try { mwUpdateGlobals(); } catch(e) { console.warn('mwUpdateGlobals', e); }
+
     console.log('[Silent refresh] UI updated');
   } catch (e) {
     console.warn('[Silent refresh] error:', e.message);
@@ -3760,6 +4052,302 @@ async function silentRefresh() {
 
 // Auto-refresh every 60s in background to detect new trades
 setInterval(silentRefresh, 60000);
+</script>
+
+<script>
+function setLayout(l){
+  document.body.setAttribute('data-layout', l);
+  try { localStorage.setItem('mw_layout', l); } catch(e){}
+  document.querySelectorAll('.v14-lay').forEach(b => b.classList.toggle('active', b.dataset.lay === l));
+  window.dispatchEvent(new Event('resize'));
+}
+(function(){
+  let saved = 'a';
+  try { saved = localStorage.getItem('mw_layout') || 'a'; } catch(e){}
+  setLayout(saved);
+})();
+</script>
+<script>
+/* ─── v15 · helpers de visualização ─── */
+function mwSeriesVal(pt){ if(!pt) return NaN; var v = pt.p != null ? pt.p : (pt.pnl != null ? pt.pnl : pt.value); return parseFloat(v); }
+function mwSeries(i, per){ var d = walletData[i]; var s = d && d.pnlSeries ? d.pnlSeries[per] : null; return Array.isArray(s) && s.length > 1 ? s : null; }
+function mwDelta(i, per){ var s = mwSeries(i, per); if(!s) return null; var a = mwSeriesVal(s[0]), b = mwSeriesVal(s[s.length-1]); return (isNaN(a)||isNaN(b)) ? null : b - a; }
+function mwDayPnl(i){ return mwDelta(i, "1D"); }
+
+function mwStats(i){
+  var d = walletData[i]; if(!d) return null;
+  var rawPos = Array.isArray(d.positions) ? d.positions : [];
+  var closed = Array.isArray(d.closed) ? d.closed : [];
+  var ids = new Set(closed.map(function(p){ return p.conditionId; }).filter(Boolean));
+  var pos = rawPos.filter(function(p){
+    if (p.conditionId && ids.has(p.conditionId)) return false;
+    var c = p.currPrice != null ? p.currPrice : (p.currentPrice != null ? p.currentPrice : null);
+    if (c !== null && (parseFloat(c) || 0) >= 0.999) return false;
+    return true;
+  });
+  var posVal = pos.reduce(function(a,p){ return a + (parseFloat(p.currentValue) || 0); }, 0);
+  var onChain = typeof d.pusdBalance === "number" ? d.pusdBalance : 0;
+  var apiCash = d.value ? (parseFloat(d.value.cashBalance) || parseFloat(d.value.availableBalance) || parseFloat(d.value.usdcBalance) || parseFloat(d.value.cash) || 0) : 0;
+  var cash = onChain >= 0.01 ? onChain : apiCash;
+  var cashSrc = onChain >= 0.01 ? "on-chain" : (apiCash > 0 ? "api" : "none");
+  var total = posVal + cash;
+  if (cash < 0.01 && d.value && d.value.value) { var av = parseFloat(d.value.value) || 0; if (av > posVal) total = av; }
+  var lb = Array.isArray(d.leaderboard) ? d.leaderboard[0] : null;
+  return { total: total, posVal: posVal, cash: cash, cashSrc: cashSrc,
+    pnl: parseFloat((lb && lb.pnl) || 0), day: mwDayPnl(i),
+    posCount: pos.filter(function(p){ return (parseFloat(p.currentValue) || 0) > 0.01; }).length };
+}
+
+function mwColor(n){ return n > 0 ? "var(--green)" : (n < 0 ? "var(--red)" : "var(--muted)"); }
+function mwSigned(n, dec){ return (n >= 0 ? "+" : "") + fmt$(n, dec == null ? 2 : dec); }
+
+function mwDayCell(i){
+  var v = mwDayPnl(i);
+  if (v === null) return '<span class="mw-na" title="série intradiária indisponível">—</span>';
+  return '<span style="font-weight:700;color:' + mwColor(v) + '">' + (v >= 0 ? "▲ " : "▼ ") + mwSigned(v) + '</span>';
+}
+
+function mwPnlBar(pnl, max){
+  var pct = Math.min(100, Math.abs(pnl) / (max || 1) * 100);
+  return '<span class="mw-bar"><i style="width:' + pct.toFixed(1) + '%;background:' + mwColor(pnl) + '"></i></span>';
+}
+
+function mwSpark(i, per, w, hgt){
+  per = per || "1W"; w = w || 84; hgt = hgt || 24;
+  var s = mwSeries(i, per);
+  if (!s) return '<span class="mw-na">—</span>';
+  var vals = s.map(mwSeriesVal).filter(function(v){ return !isNaN(v); });
+  if (vals.length < 2) return '<span class="mw-na">—</span>';
+  var step = Math.max(1, Math.ceil(vals.length / 60));
+  var pts = [];
+  for (var k = 0; k < vals.length; k += step) pts.push(vals[k]);
+  if (pts[pts.length-1] !== vals[vals.length-1]) pts.push(vals[vals.length-1]);
+  var mn = Math.min.apply(null, pts), mx = Math.max.apply(null, pts), rg = (mx - mn) || 1;
+  var d = pts.map(function(v, k){
+    var x = (k / (pts.length - 1)) * w;
+    var y = hgt - 2 - ((v - mn) / rg) * (hgt - 4);
+    return x.toFixed(1) + "," + y.toFixed(1);
+  }).join(" ");
+  var delta = pts[pts.length-1] - pts[0];
+  return '<svg class="mw-spark" width="' + w + '" height="' + hgt + '" viewBox="0 0 ' + w + ' ' + hgt + '" preserveAspectRatio="none">' +
+         '<polyline fill="none" stroke="' + mwColor(delta) + '" stroke-width="1.3" points="' + d + '"></polyline></svg>';
+}
+
+/* ─── Faixa consolidada + abas ─── */
+var _mwPrev = {};
+function mwFlash(el){ if(!el) return; el.classList.remove("mw-flash"); void el.offsetWidth; el.classList.add("mw-flash"); }
+function mwSet(id, txt, color){
+  var el = document.getElementById(id); if(!el) return;
+  if (el.textContent !== txt) { el.textContent = txt; mwFlash(el.parentElement); }
+  if (color) el.style.color = color;
+}
+function mwUpdateGlobals(){
+  var t = 0, c = 0, p = 0, pnl = 0, day = 0, dayOk = false, open = 0, missing = 0, loaded = 0;
+  WALLETS.forEach(function(w, i){
+    var s = mwStats(i);
+    var tab = document.querySelector('.wtab[data-wallet="' + i + '"]');
+    var box = null;
+    if (tab) {
+      box = tab.querySelector(".mw-tabval");
+      if (!box) { box = document.createElement("span"); box.className = "mw-tabval"; tab.appendChild(box); }
+    }
+    if (!s) { if (box) box.innerHTML = ""; return; }
+    loaded++; t += s.total; c += s.cash; p += s.posVal; pnl += s.pnl; open += s.posCount;
+    if (s.cashSrc === "none") missing++;
+    if (s.day !== null) { day += s.day; dayOk = true; }
+    if (box) {
+      var html = "<b>" + fmt$(s.total, 0) + "</b>";
+      if (s.day !== null) html += '<em style="color:' + mwColor(s.day) + '">' + mwSigned(s.day, 0) + "</em>";
+      if (box.innerHTML !== html) {
+        box.innerHTML = html;
+        if (_mwPrev[i] !== undefined && Math.abs(_mwPrev[i] - s.total) > 0.5) mwFlash(tab);
+      }
+      _mwPrev[i] = s.total;
+    }
+  });
+  if (!loaded) return;
+  mwSet("mwgTotal", fmt$(t));
+  mwSet("mwgCash", fmt$(c));
+  mwSet("mwgPos", fmt$(p));
+  var ps = document.getElementById("mwgPosSub"); if (ps) ps.textContent = open + " abertas · " + (t > 0 ? (p / t * 100).toFixed(0) : 0) + "% exposto";
+  mwSet("mwgDay", dayOk ? mwSigned(day) : "—", dayOk ? mwColor(day) : "var(--muted)");
+  var ds = document.getElementById("mwgDaySub");
+  if (ds) ds.textContent = dayOk && t > 0 ? (day >= 0 ? "+" : "") + (day / t * 100).toFixed(2) + "% · 24h" : "últimas 24h";
+  mwSet("mwgPnl", mwSigned(pnl), mwColor(pnl));
+  var st = document.getElementById("mwgStatus");
+  if (st) {
+    var parts = [];
+    if (missing) parts.push('<span class="mw-warn">⚠ ' + missing + " wallet(s) sem saldo on-chain</span>");
+    parts.push(loaded + "/" + WALLETS.length + " wallets · " + new Date().toLocaleTimeString("pt-BR"));
+    st.innerHTML = parts.join('<span style="display:block;height:5px"></span>');
+  }
+}
+setInterval(mwUpdateGlobals, 4000);
+setTimeout(mwUpdateGlobals, 1500);
+</script>
+
+<script>
+/* ═══ v16 · gráfico de PnL redesenhado ═══ */
+function mwFmtAxis(v){
+  var a = Math.abs(v);
+  if (a >= 1000000) return (v<0?'-':'') + '$' + (a/1000000).toFixed(a/1000000 >= 10 ? 0 : 1) + 'M';
+  if (a >= 1000)    return (v<0?'-':'') + '$' + (a/1000).toFixed(a/1000 >= 10 ? 0 : 1) + 'k';
+  return (v<0?'-':'') + '$' + a.toFixed(a < 10 ? 2 : 0);
+}
+function mwFmtTime(t, period){
+  var d = new Date(t < 1e12 ? t * 1000 : t);
+  if (period === '1D') return d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+  if (period === '1W') return d.toLocaleDateString('pt-BR', {weekday:'short'}).replace('.','') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit'}) + 'h';
+  return d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
+}
+function mwNiceTicks(min, max, n){
+  var span = (max - min) || 1;
+  var step = Math.pow(10, Math.floor(Math.log10(span / n)));
+  var err = (span / n) / step;
+  if (err >= 7.5) step *= 10; else if (err >= 3.5) step *= 5; else if (err >= 1.5) step *= 2;
+  var out = [], v = Math.ceil(min / step) * step;
+  for (; v <= max + step * 0.001 && out.length < 12; v += step) out.push(+v.toFixed(6));
+  return out;
+}
+var _mwCharts = {};
+function mwDrawChart(svg, series, opts){
+  if (!svg) return;
+  opts = opts || {};
+  var host = svg.parentElement;
+  if (svg.id) _mwCharts[svg.id] = { series: series, opts: opts };
+  var W = Math.max(280, Math.round((host && host.clientWidth) || svg.clientWidth || 640));
+  var H = opts.height || 150;
+  var padL = opts.compact ? 6 : 52, padR = opts.compact ? 8 : 16;
+  var padT = 12, padB = opts.compact ? 8 : 24;
+  svg.removeAttribute('preserveAspectRatio');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.setAttribute('class', 'mw-chart');
+  svg.style.height = H + 'px';
+  svg.innerHTML = '';
+  var NSU = 'http://www.w3.org/2000/svg';
+  var mk = function(t, a){ var e = document.createElementNS(NSU, t); for (var k in a) e.setAttribute(k, a[k]); return e; };
+  if (!Array.isArray(series) || series.length < 2) {
+    var em = mk('text', {x: W/2, y: H/2, 'text-anchor':'middle', fill:'#5d6270', 'font-size':11, 'font-family':'IBM Plex Mono, monospace'});
+    em.textContent = 'sem dados para este período'; svg.appendChild(em); return;
+  }
+  var xs = series.map(function(p){ return p.t; });
+  var ys = series.map(function(p){ return p.p; });
+  var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+  var dMin = Math.min.apply(null, ys), dMax = Math.max.apply(null, ys);
+  var span = (dMax - dMin) || Math.max(1, Math.abs(dMax) * 0.02);
+  var minY = dMin - span * 0.18, maxY = dMax + span * 0.18;
+  if (dMin >= 0 && minY < 0) minY = Math.min(0, dMin - span * 0.08);
+  var rgX = (maxX - minX) || 1, rgY = (maxY - minY) || 1;
+  var sx = function(x){ return padL + ((x - minX) / rgX) * (W - padL - padR); };
+  var sy = function(y){ return H - padB - ((y - minY) / rgY) * (H - padT - padB); };
+  var delta = ys[ys.length-1] - ys[0];
+  var col = delta >= 0 ? '#4fb286' : '#d1495b';
+  if (!opts.compact) {
+    mwNiceTicks(minY, maxY, 4).forEach(function(v){
+      var y = sy(v);
+      if (y < padT - 2 || y > H - padB + 2) return;
+      var zero = Math.abs(v) < rgY * 0.0001;
+      svg.appendChild(mk('line', {x1: padL, x2: W - padR, y1: y.toFixed(1), y2: y.toFixed(1),
+        stroke: zero ? '#3a3f49' : '#1b1e24', 'stroke-width': 1, 'stroke-dasharray': zero ? '3 3' : ''}));
+      var t = mk('text', {x: padL - 9, y: (y + 3.5).toFixed(1), 'text-anchor':'end', fill:'#4d525e', 'font-size':9, 'font-family':'IBM Plex Mono, monospace'});
+      t.textContent = mwFmtAxis(v); svg.appendChild(t);
+    });
+    var n = W > 780 ? 5 : 3;
+    for (var i = 0; i <= n; i++) {
+      var tx = minX + (rgX * i / n), X = sx(tx);
+      var lt = mk('text', {x: X.toFixed(1), y: H - 6, 'text-anchor': i === 0 ? 'start' : (i === n ? 'end' : 'middle'), fill:'#4d525e', 'font-size':9, 'font-family':'IBM Plex Mono, monospace'});
+      lt.textContent = mwFmtTime(tx, opts.period); svg.appendChild(lt);
+    }
+  }
+  var d = series.map(function(p, i){ return (i ? 'L' : 'M') + ' ' + sx(p.t).toFixed(1) + ' ' + sy(p.p).toFixed(1); }).join(' ');
+  var gid = 'mwg-' + (svg.id || 'x') + '-' + (opts.period || '');
+  var defs = mk('defs', {});
+  var lg = mk('linearGradient', {id: gid, x1:'0', y1:'0', x2:'0', y2:'1'});
+  lg.appendChild(mk('stop', {offset:'0%', 'stop-color': col, 'stop-opacity':'0.26'}));
+  lg.appendChild(mk('stop', {offset:'100%', 'stop-color': col, 'stop-opacity':'0'}));
+  defs.appendChild(lg); svg.appendChild(defs);
+  var base = Math.min(H - padB, Math.max(padT, sy(Math.max(minY, Math.min(0, dMin)))));
+  svg.appendChild(mk('path', {d: d + ' L ' + sx(xs[xs.length-1]).toFixed(1) + ' ' + base.toFixed(1) + ' L ' + sx(xs[0]).toFixed(1) + ' ' + base.toFixed(1) + ' Z', fill:'url(#'+gid+')'}));
+  svg.appendChild(mk('path', {d: d, fill:'none', stroke: col, 'stroke-width': opts.compact ? 1.4 : 1.8, 'stroke-linejoin':'round', 'stroke-linecap':'round'}));
+  svg.appendChild(mk('circle', {cx: sx(xs[xs.length-1]).toFixed(1), cy: sy(ys[ys.length-1]).toFixed(1), r: opts.compact ? 2.4 : 3.2, fill: col, stroke:'#0b0c0e', 'stroke-width':1.5}));
+  if (opts.compact || !host) return;
+  var cross = mk('line', {y1: padT, y2: H - padB, stroke:'#4d525e', 'stroke-width':1, 'stroke-dasharray':'2 3', opacity:0});
+  var hdot = mk('circle', {r: 3.4, fill: col, stroke:'#0b0c0e', 'stroke-width': 1.5, opacity: 0});
+  svg.appendChild(cross); svg.appendChild(hdot);
+  if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+  var tip = host.querySelector('.mw-tip');
+  if (!tip) { tip = document.createElement('div'); tip.className = 'mw-tip'; host.appendChild(tip); }
+  svg.onmousemove = function(ev){
+    var r = svg.getBoundingClientRect();
+    var px = (ev.clientX - r.left) * (W / r.width);
+    var tv = minX + ((px - padL) / (W - padL - padR)) * rgX;
+    var best = 0, bd = Infinity;
+    for (var k = 0; k < xs.length; k++) { var dd = Math.abs(xs[k] - tv); if (dd < bd) { bd = dd; best = k; } }
+    var X = sx(xs[best]), Y = sy(ys[best]);
+    cross.setAttribute('x1', X.toFixed(1)); cross.setAttribute('x2', X.toFixed(1)); cross.setAttribute('opacity', 1);
+    hdot.setAttribute('cx', X.toFixed(1)); hdot.setAttribute('cy', Y.toFixed(1)); hdot.setAttribute('opacity', 1);
+    tip.innerHTML = '<b style="color:' + (ys[best] >= 0 ? '#4fb286' : '#d1495b') + '">' + (ys[best] >= 0 ? '+' : '-') + '$' + Math.abs(ys[best]).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) + '</b><span>' + mwFmtTime(xs[best], opts.period) + '</span>';
+    tip.style.left = (X / W * r.width) + 'px';
+    tip.style.top = (Y / H * r.height) + 'px';
+    tip.style.opacity = 1;
+  };
+  svg.onmouseleave = function(){ cross.setAttribute('opacity', 0); hdot.setAttribute('opacity', 0); tip.style.opacity = 0; };
+}
+var _mwRz;
+window.addEventListener('resize', function(){
+  clearTimeout(_mwRz);
+  _mwRz = setTimeout(function(){
+    Object.keys(_mwCharts).forEach(function(id){
+      var el = document.getElementById(id);
+      if (el && el.isConnected) mwDrawChart(el, _mwCharts[id].series, _mwCharts[id].opts);
+    });
+  }, 160);
+});
+function mwSeriesOf(idx, period){
+  var d = walletData[idx];
+  return (d && d.pnlSeries && Array.isArray(d.pnlSeries[period])) ? d.pnlSeries[period] : [];
+}
+function drawPnlSvgChart(idx, period){
+  var s = mwSeriesOf(idx, period);
+  mwDrawChart(document.getElementById('pnl-svg-' + idx), s, {period: period, height: 168});
+  mwUpdatePnlHeader(idx, s, period);
+}
+function drawOvChart(idx, period){
+  mwDrawChart(document.getElementById('ov-svg-' + idx), mwSeriesOf(idx, period), {period: period, height: 96, compact: true});
+}
+function drawConsolidatedSvgChart(period){
+  var s = aggregatePnlSeries(period);
+  mwDrawChart(document.getElementById('pnl-svg-consolidated'), s, {period: period, height: 190});
+  mwUpdatePnlHeader('consolidated', s, period);
+}
+function mwPortfolioTotal(){
+  var t = 0;
+  WALLETS.forEach(function(_, i){ var s = (typeof mwStats === 'function') ? mwStats(i) : null; if (s) t += s.total; });
+  return Math.max(t, 0.01);
+}
+function mwUpdatePnlHeader(key, series, period){
+  var pnlEl = document.getElementById('pnl-card-val-' + key);
+  if (!pnlEl || !series || series.length < 2) return;
+  var ys = series.map(function(p){ return p.p; });
+  var delta = ys[ys.length-1] - ys[0];
+  var pos = delta >= 0;
+  var base = key === 'consolidated' ? mwPortfolioTotal() : 0;
+  var pctTxt = '';
+  if (base > 0.02) {
+    var pct = (delta / Math.max(base - delta, 0.01)) * 100;
+    pctTxt = ' <span style="font-size:18px;font-weight:500;letter-spacing:0;color:' + (pos ? 'var(--green)' : 'var(--red)') + '">(' + (pos ? '+' : '') + pct.toFixed(2) + '%)</span>';
+  }
+  pnlEl.innerHTML = (pos ? '+' : '-') + '$' + Math.abs(delta).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) + pctTxt;
+  pnlEl.className = 'pnl-card-value ' + (pos ? 'pos-green' : 'pos-red');
+  var tri = document.getElementById('pnl-card-tri-' + key);
+  if (tri) { tri.textContent = pos ? '▲' : '▼'; tri.className = 'pnl-triangle ' + (pos ? 'pos' : 'neg'); }
+  var lbl = document.getElementById('pnl-card-lbl-' + key);
+  if (lbl) {
+    var L = {'1D':'Past Day','1W':'Past Week','1M':'Past Month','1Y':'Past Year','ALL':'All-Time'};
+    lbl.textContent = 'Profit / Loss · ' + (L[period] || period);
+  }
+}
 </script>
 </body>
 </html>
