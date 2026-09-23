@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mondwatch v16 · Portfolio Dashboard</title>
+<title>Mondwatch · Portfolio Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
 
@@ -1711,12 +1711,14 @@ table td,table th{font-variant-numeric:tabular-nums}
 .mw-bar i{display:block;height:100%;border-radius:2px}
 .mw-na{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.5px}
 .mw-spark{display:block;margin-left:auto}
-/* ── Toast como painel lateral (não bloqueia a tela) ── */
-.trade-toast-overlay{align-items:flex-start!important;justify-content:flex-end!important;padding:104px 16px 16px;background:transparent!important;pointer-events:none!important}
-.trade-toast{width:min(380px,92vw);max-height:70vh;pointer-events:auto;box-shadow:0 14px 44px rgba(0,0,0,.55)}
-.trade-toast-entries{max-height:calc(70vh - 40px)}
-.trade-toast-img{height:88px}
-.trade-toast-market{font-size:14px}
+/* ── Toast Centralizado no meio da tela ── */
+.trade-toast-overlay{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:24px!important;z-index:99999!important;pointer-events:none!important}
+.trade-toast-overlay.visible{background:rgba(0,0,0,0.45)!important;backdrop-filter:blur(5px)!important;-webkit-backdrop-filter:blur(5px)!important;pointer-events:auto!important}
+.trade-toast-overlay.exit{background:rgba(0,0,0,0)!important;pointer-events:none!important}
+.trade-toast{width:min(440px,94vw)!important;max-height:85vh!important;margin:auto!important;pointer-events:auto!important;box-shadow:0 25px 60px rgba(0,0,0,.8),0 0 40px rgba(79,178,134,.12)!important}
+.trade-toast-entries{max-height:calc(85vh - 45px)!important}
+.trade-toast-img{height:110px!important}
+.trade-toast-market{font-size:15px!important}
 </style>
 
 <style id="v16-chart">
@@ -1976,14 +1978,45 @@ function configPastWallets() {
   loadAll();
 }
 
-// ─── Fetch helpers ────────────────────────────────────────────────
+// ─── Fetch helpers (com cache inteligente e proteção contra timeouts) ───
+// Cache persistente para séries temporais e dados válidos
+function getStoredPnlSeries(idx) {
+  try {
+    const raw = localStorage.getItem(`mw_pnl_cache_${idx}`);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+function setStoredPnlSeries(idx, series) {
+  try {
+    localStorage.setItem(`mw_pnl_cache_${idx}`, JSON.stringify(series));
+  } catch(e) {}
+}
+
 async function apiFetch(url) {
   try {
-    const sep = url.includes('?') ? '&' : '?';
-    const finalUrl = url + sep + '_t=' + Date.now();
-    const r = await fetch(finalUrl, { headers: { 'Accept': 'application/json' }, cache: 'no-store' });
+    const isPnlApi = url.includes('user-pnl-api.polymarket.com');
+    let finalUrl = url;
+    // NÃO anexa _t nas chamadas de série temporal para permitir cache da Cloudflare (resposta em ~170ms)
+    if (!isPnlApi) {
+      const sep = url.includes('?') ? '&' : '?';
+      finalUrl = url + sep + '_t=' + Date.now();
+    }
+    const fetchOptions = {
+      headers: { 'Accept': 'application/json' }
+    };
+    if (!isPnlApi) {
+      fetchOptions.cache = 'no-store';
+    }
+    const r = await fetch(finalUrl, fetchOptions);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return await r.json();
+    const data = await r.json();
+    // Se a API retornar payload de erro como {"error": "context deadline exceeded"}
+    if (data && typeof data === 'object' && !Array.isArray(data) && data.error) {
+      console.warn('API returned error payload:', url, data.error);
+      return null;
+    }
+    return data;
   } catch(e) {
     console.warn('Fetch error:', url, e.message);
     return null;
@@ -2045,6 +2078,8 @@ function filterLast365d(series) {
 
 async function loadWallet(idx) {
   const addr = WALLETS[idx].addr;
+  const prevData = walletData[idx] || {};
+
   const [positions, closed, activity, value] = await Promise.all([
     apiFetch(`${DATA_API}/positions?user=${addr}&sizeThreshold=.01&limit=100`),
     apiFetch(`${DATA_API}/closed-positions?user=${addr}&limit=500`),
@@ -2052,14 +2087,18 @@ async function loadWallet(idx) {
     apiFetch(`${DATA_API}/value?user=${addr}`)
   ]);
 
-  // Fetch trades and leaderboard in parallel
+  // Fetch trades, leaderboard (all, day, week) and pusdBalance in parallel
   // PUSD balance is fetched with staggered delay (idx * 400ms) to avoid Etherscan rate limit
-  const [trades, leaderboard, leaderboardVol, pusdBalance] = await Promise.all([
-  apiFetch(`${DATA_API}/trades?user=${addr}&limit=500`),
-  apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=PNL&limit=1&offset=0&category=overall&user=${addr}`),
-  apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=vol&limit=1&offset=0&user=${addr}`),
-  fetchPusdBalance(addr, 3, idx * 400)
-]);
+  const [trades, leaderboard, leaderboardDay, leaderboardVol, pusdBalance] = await Promise.all([
+    apiFetch(`${DATA_API}/trades?user=${addr}&limit=500`),
+    apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=PNL&limit=1&offset=0&category=overall&user=${addr}`),
+    apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=day&orderBy=PNL&limit=1&offset=0&category=overall&user=${addr}`),
+    apiFetch(`${DATA_API}/v1/leaderboard?timePeriod=all&orderBy=vol&limit=1&offset=0&user=${addr}`),
+    fetchPusdBalance(addr, 3, idx * 400)
+  ]);
+
+  // Stagger time-series fetch slightly (idx * 60ms) to avoid server burst
+  if (idx > 0) await new Promise(r => setTimeout(r, idx * 60));
 
   // Fetch PnL time-series for all 4 periods in parallel
   const PNL_API = 'https://user-pnl-api.polymarket.com/user-pnl';
@@ -2069,13 +2108,34 @@ async function loadWallet(idx) {
     apiFetch(`${PNL_API}?user_address=${addr}&interval=1m&fidelity=1d`),
     apiFetch(`${PNL_API}?user_address=${addr}&interval=all&fidelity=12h`),
   ]);
+
+  // Manter a última série válida de cada período caso a chamada atual falhe ou dê timeout
+  const prevSeries = prevData.pnlSeries || getStoredPnlSeries(idx) || {};
+  const validPnl1d = (Array.isArray(pnl1d) && pnl1d.length >= 1) ? pnl1d : (prevSeries['1D'] || null);
+  const validPnl1w = (Array.isArray(pnl1w) && pnl1w.length >= 2) ? pnl1w : (prevSeries['1W'] || null);
+  const validPnl1m = (Array.isArray(pnl1m) && pnl1m.length >= 2) ? pnl1m : (prevSeries['1M'] || null);
+  const validPnlAll = (Array.isArray(pnlAll) && pnlAll.length >= 2) ? pnlAll : (prevSeries['ALL'] || null);
+
   // 1Y não é suportado pela API (HTTP 400 — só aceita 6h/12h/1d/1w/1m/all/max).
   // Derivamos client-side da série ALL (fidelity 12h), filtrando os últimos 365 dias.
-  const pnl1y = filterLast365d(pnlAll);
-  const pnlSeries = { '1D': pnl1d, '1W': pnl1w, '1M': pnl1m, '1Y': pnl1y, 'ALL': pnlAll };
-  console.log(`W${idx+1} pnlSeries ALL sample:`, JSON.stringify(pnlAll?.slice(0,2)));
+  const pnl1y = filterLast365d(validPnlAll);
+  const validPnl1y = (Array.isArray(pnl1y) && pnl1y.length >= 2) ? pnl1y : (prevSeries['1Y'] || []);
+  const pnlSeries = { '1D': validPnl1d, '1W': validPnl1w, '1M': validPnl1m, '1Y': validPnl1y, 'ALL': validPnlAll };
+  setStoredPnlSeries(idx, pnlSeries);
 
-  walletData[idx] = { positions, closed, activity, value, trades, pusdBalance, leaderboard, leaderboardVol, pnlSeries };
+  // Preservar dados anteriores se a nova chamada retornou vazia/falhou
+  walletData[idx] = {
+    positions: positions || prevData.positions || [],
+    closed: closed || prevData.closed || [],
+    activity: activity || prevData.activity || [],
+    value: value || prevData.value || null,
+    trades: trades || prevData.trades || [],
+    pusdBalance: (typeof pusdBalance === 'number' && pusdBalance >= 0.01) ? pusdBalance : (prevData.pusdBalance || 0),
+    leaderboard: (Array.isArray(leaderboard) && leaderboard.length > 0) ? leaderboard : (prevData.leaderboard || null),
+    leaderboardDay: (Array.isArray(leaderboardDay) && leaderboardDay.length > 0) ? leaderboardDay : (prevData.leaderboardDay || null),
+    leaderboardVol: (Array.isArray(leaderboardVol) && leaderboardVol.length > 0) ? leaderboardVol : (prevData.leaderboardVol || null),
+    pnlSeries
+  };
 
   return walletData[idx];
 }
@@ -2093,13 +2153,29 @@ function fmtPct(n) {
 }
 function fmtDate(ts) {
   if (!ts) return '—';
-  const d = new Date(typeof ts === 'number' ? ts * 1000 : ts);
+  let ms = 0;
+  if (typeof ts === 'number') {
+    ms = ts < 1e12 ? ts * 1000 : ts;
+  } else {
+    const n = parseFloat(ts);
+    if (!isNaN(n) && n > 0) {
+      ms = n < 1e12 ? n * 1000 : n;
+    } else {
+      ms = new Date(ts).getTime() || 0;
+    }
+  }
+  if (!ms || isNaN(ms)) return '—';
+
   const now = Date.now();
-  const diff = (now - d.getTime()) / 1000;
-  if (diff < 60)   return Math.floor(diff) + 's ago';
-  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
-  if (diff < 86400)return Math.floor(diff/3600) + 'h ago';
-  return d.toLocaleDateString('pt-BR');
+  const diffSec = Math.max(0, (now - ms) / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+
+  if (diffMin < 1)   return 'agora';
+  if (diffMin < 60)  return diffMin + 'm ago';
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24)    return diffH + 'h ago';
+  const diffD = Math.floor(diffH / 24);
+  return diffD + 'd ago';
 }
 function pnlClass(n) { return n > 0 ? 'pos-green' : n < 0 ? 'pos-red' : 'pos-gray'; }
 function pnlSign(n) { return n > 0 ? '+' : ''; }
@@ -2505,8 +2581,14 @@ function drawPnlSvgChart(idx, period) {
   const d = walletData[idx];
   if (!d) return;
 
-  // Use real API series: { t: unix_seconds, p: pnl_value }
-  const series = Array.isArray(d.pnlSeries?.[period]) ? d.pnlSeries[period] : [];
+  // Use real API series: { t: unix_seconds, p: pnl_value } (com fallback para último válido)
+  let series = Array.isArray(d.pnlSeries?.[period]) ? d.pnlSeries[period] : [];
+  if (series.length < 2) {
+    const stored = getStoredPnlSeries(idx);
+    if (stored && Array.isArray(stored[period]) && stored[period].length >= 2) {
+      series = stored[period];
+    }
+  }
 
   svg.innerHTML = '';
 
@@ -3247,23 +3329,28 @@ function renderLive() {
     const sideStr = (a.side || '').toUpperCase();
     const actionApi = (a.action || '').toUpperCase();
     const isRedeem = typeStr.includes('REDEEM') || sideStr === 'REDEEM' || actionApi === 'REDEEM';
-    const isSell = !isRedeem && (typeStr === 'SELL' || typeStr.includes('SELL') || typeStr.includes('VENDA') || sideStr === 'SELL' || actionApi === 'SELL' || parseFloat(a.size || a.amount) < 0 || price >= 0.9985);
+    const isSell = !isRedeem && (typeStr === 'SELL' || sideStr === 'SELL' || actionApi === 'SELL');
     const gType = isRedeem ? 'redeem' : (isSell ? 'sell' : 'buy');
     const actionStr = gType.toUpperCase();
     const outcomeStr = (a.outcome || '').toUpperCase();
     const marketTitle = a.title || a.market || '—';
-    const marketKey = marketTitle + '|' + outcomeStr + '|' + actionStr;
+    const condId = a.conditionId || '';
+    const marketKey = (condId ? condId : marketTitle) + '|' + outcomeStr + '|' + actionStr;
     const time = _actTime(a);
+    const BUFFER_MS = 60 * 1000; // Buffer de 1 minuto — agrupa como no Telegram
+    const itemUsdc = parseFloat(a.usdcSize) || ((parseFloat(a.price) || 0) * (parseFloat(a.size) || 0)) || parseFloat(a.amount) || 0;
 
     const existingGroup = groupedActivity.find(g => 
-      g.key === marketKey && Math.abs(g.time - time) < 30 * 60 * 1000 // 30 mins window
+      g.key === marketKey && Math.abs(g.time - time) <= BUFFER_MS
     );
 
     if (existingGroup) {
-      if (!existingGroup.items.some(item => item._wi === a._wi)) {
-        existingGroup.items.push(a);
-        existingGroup.totalUsdc += parseFloat(a.usdcSize || a.amount) || 0;
-      }
+      // Soma de todas as compras dentro da janela do buffer (ex: 5 + 5 + 5 = 15 USD)
+      existingGroup.items.push(a);
+      existingGroup.totalUsdc += itemUsdc;
+      existingGroup._totalTokens += (parseFloat(a.size) || 0);
+      if (price > 0 && !existingGroup.latestPrice) existingGroup.latestPrice = price;
+      if (time > existingGroup.time) existingGroup.time = time;
     } else {
       groupedActivity.push({
         key: marketKey,
@@ -3275,7 +3362,8 @@ function renderLive() {
         typeStr: typeStr,
         latestPrice: price,
         items: [a],
-        totalUsdc: parseFloat(a.usdcSize || a.amount) || 0
+        totalUsdc: itemUsdc,
+        _totalTokens: (parseFloat(a.size) || 0)
       });
     }
   });
@@ -3311,9 +3399,11 @@ function renderLive() {
       const price = g.latestPrice;
       const usdcSize = g.totalUsdc;
 
+      // Badges das wallets que participaram do buffer (ordenadas W0, W1, W2... sem duplicar badge)
+      const uniqueWalletIndices = Array.from(new Set(g.items.map(item => item._wi))).sort((a, b) => a - b);
       let walletsHtml = '';
-      g.items.forEach(item => {
-         const ww = WALLETS[item._wi];
+      uniqueWalletIndices.forEach(wi => {
+         const ww = WALLETS[wi];
          if(ww) {
            walletsHtml += `<span title="${ww.label}" style="display:inline-block;border-radius:50px;background:${ww.color};color:#000;font-family:'IBM Plex Mono','Share Tech Mono',monospace;font-size:10px;font-weight:800;padding:4px 8px;margin-left:4px;border:1px solid rgba(255,255,255,0.3);line-height:1;vertical-align:middle;">${ww.label}</span>`;
          }
@@ -3325,7 +3415,7 @@ function renderLive() {
         ${g.outcome ? `<span class="outcome-tag ${isYes?'outcome-yes':'outcome-no'}" style="font-size:10px;padding:2px 6px">${g.outcome}</span>` : ''}
         <div class="onchain-act-market">${g.marketTitle} <span style="display:inline-flex;align-items:center;vertical-align:middle;margin-left:6px">${walletsHtml}</span></div>
         <div class="onchain-act-val">${usdcSize > 0 ? fmt$(usdcSize) : ''}${price > 0 ? ' @ '+(price*100).toFixed(1)+'¢' : ''}</div>
-        <div class="onchain-act-time">${fmtDate(g.items[0].timestamp || g.items[0].createdAt)}</div>
+        <div class="onchain-act-time">${fmtDate(g.time)}</div>
       </div>`;
     });
   }
@@ -3860,7 +3950,7 @@ function getTradeCategory(typeStr, priceVal, tradeObj) {
   const action = tradeObj ? (tradeObj.action || '').toUpperCase().trim() : '';
   const size = tradeObj ? parseFloat(tradeObj.size || tradeObj.amount) : 0;
   if (t === 'REDEEM' || t.includes('REDEEM')) return 'redeem';
-  if (t === 'SELL' || t === 'SELL_ORDER' || t.includes('SELL') || t.includes('VENDA') || side === 'SELL' || action === 'SELL' || size < 0 || (priceVal !== undefined && priceVal >= 0.9985)) return 'sell';
+  if (t === 'SELL' || t === 'SELL_ORDER' || t.includes('SELL') || t.includes('VENDA') || side === 'SELL' || action === 'SELL' || size < 0) return 'sell';
   return 'buy';
 }
 
@@ -4126,11 +4216,53 @@ function setLayout(l){
 })();
 </script>
 <script>
-/* ─── v15 · helpers de visualização ─── */
+/* ─── v15 · helpers de visualização (com persistência da última informação válida) ─── */
+var _lastValidDayPnl = {};
+
 function mwSeriesVal(pt){ if(!pt) return NaN; var v = pt.p != null ? pt.p : (pt.pnl != null ? pt.pnl : pt.value); return parseFloat(v); }
-function mwSeries(i, per){ var d = walletData[i]; var s = d && d.pnlSeries ? d.pnlSeries[per] : null; return Array.isArray(s) && s.length > 1 ? s : null; }
-function mwDelta(i, per){ var s = mwSeries(i, per); if(!s) return null; var a = mwSeriesVal(s[0]), b = mwSeriesVal(s[s.length-1]); return (isNaN(a)||isNaN(b)) ? null : b - a; }
-function mwDayPnl(i){ return mwDelta(i, "1D"); }
+
+function mwSeries(i, per){
+  var d = walletData[i];
+  var s = d && d.pnlSeries ? d.pnlSeries[per] : null;
+  if (!Array.isArray(s) || s.length <= 1) {
+    var stored = getStoredPnlSeries(i);
+    if (stored && Array.isArray(stored[per]) && stored[per].length > 1) {
+      s = stored[per];
+    }
+  }
+  return Array.isArray(s) && s.length > 1 ? s : null;
+}
+
+function mwDelta(i, per){
+  var s = mwSeries(i, per);
+  if(!s) return null;
+  var a = mwSeriesVal(s[0]), b = mwSeriesVal(s[s.length-1]);
+  return (isNaN(a)||isNaN(b)) ? null : b - a;
+}
+
+function mwDayPnl(i){
+  var d = walletData[i];
+  // 1. Tentar delta da série 1D
+  var delta1d = mwDelta(i, "1D");
+  if (delta1d !== null && !isNaN(delta1d)) {
+    _lastValidDayPnl[i] = delta1d;
+    return delta1d;
+  }
+  // 2. Tentar leaderboard oficial diário de 24h
+  var lbDay = d && Array.isArray(d.leaderboardDay) ? d.leaderboardDay[0] : null;
+  if (lbDay && lbDay.pnl != null) {
+    var p = parseFloat(lbDay.pnl);
+    if (!isNaN(p)) {
+      _lastValidDayPnl[i] = p;
+      return p;
+    }
+  }
+  // 3. Fallback: manter a última informação válida se já tiver sido calculada
+  if (_lastValidDayPnl[i] !== undefined && _lastValidDayPnl[i] !== null) {
+    return _lastValidDayPnl[i];
+  }
+  return null;
+}
 
 function mwStats(i){
   var d = walletData[i]; if(!d) return null;
