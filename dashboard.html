@@ -2700,18 +2700,36 @@ function setPnlPeriod(btn, period, idx) {
 // Assim a curva consolidada é a soma real do PnL de todas as wallets em cada
 // instante, e `último - primeiro` = soma dos deltas individuais (≠ Overview).
 function aggregatePnlSeries(period) {
-  const seriesList = walletData.map(d => {
-    const s = Array.isArray(d?.pnlSeries?.[period]) ? d.pnlSeries[period] : [];
+  const seriesList = walletData.map((d, i) => {
+    let s = Array.isArray(d?.pnlSeries?.[period]) ? d.pnlSeries[period] : [];
+    if (s.length < 2 && typeof getStoredPnlSeries === 'function') {
+      const stored = getStoredPnlSeries(i);
+      if (stored && Array.isArray(stored[period]) && stored[period].length >= 2) {
+        s = stored[period];
+      }
+    }
     return s.filter(pt => pt && typeof pt.t === 'number' && typeof pt.p === 'number')
             .sort((a, b) => a.t - b.t);
   }).filter(s => s.length > 0);
 
   if (seriesList.length === 0) return [];
 
-  // União de todos os timestamps, ordenada
-  const unionTs = Array.from(new Set(
-    seriesList.flatMap(s => s.map(pt => pt.t))
-  )).sort((a, b) => a - b);
+  // Determinar o t máximo entre todas as séries válidas
+  const allTs = seriesList.flatMap(s => s.map(pt => pt.t));
+  if (allTs.length === 0) return [];
+  const maxT = Math.max(...allTs);
+
+  // Janela máxima para evitar que séries antigas estiquem o gráfico (ex: 24.5h para 1D)
+  let minAllowedT = 0;
+  if (period === '1D') minAllowedT = maxT - (24.5 * 3600);
+  else if (period === '1W') minAllowedT = maxT - (7.5 * 86400);
+  else if (period === '1M') minAllowedT = maxT - (31 * 86400);
+
+  let unionTs = Array.from(new Set(allTs)).sort((a, b) => a - b);
+  if (minAllowedT > 0) {
+    unionTs = unionTs.filter(t => t >= minAllowedT);
+    if (unionTs.length === 0) unionTs = [maxT];
+  }
 
   // Ponteiro por wallet: índice do último ponto consumido (pt.t <= t atual)
   const ptr = seriesList.map(() => 0);
@@ -2721,9 +2739,14 @@ function aggregatePnlSeries(period) {
     for (let wi = 0; wi < seriesList.length; wi++) {
       const s = seriesList[wi];
       while (ptr[wi] + 1 < s.length && s[ptr[wi] + 1].t <= t) ptr[wi]++;
-      // Se s[ptr].t <= t, usa esse valor; caso contrário a wallet ainda não
-      // havia começado (s[0].t > t) e contribui 0.
-      if (s[ptr[wi]].t <= t) sum += s[ptr[wi]].p;
+      // BACKWARD FILL: se o timestamp atual for anterior ao primeiro ponto da wallet (t < s[0].t),
+      // a wallet contribui com o seu valor inicial s[0].p (NUNCA 0!).
+      // Isso elimina saltos artificiais de milhares de dólares quando carteiras entram na janela 1D.
+      if (t < s[0].t) {
+        sum += s[0].p;
+      } else {
+        sum += s[ptr[wi]].p;
+      }
     }
     result.push({ t, p: sum });
   }
